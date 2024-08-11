@@ -1,0 +1,23 @@
+{
+  "name": "electron_game",
+  "version": "1.0.0",
+  "description": "test",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "jjosephi",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^30.0.2",
+    "electron-reloader": "^1.2.3"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs-node": "3.1.0",
+    "@tensorflow/tfjs-vis": "^1.5.1",
+    "node-fetch": "^3.3.2",
+    "python-shell": "^5.0.0"
+  }
+}
