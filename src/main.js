@@ -24,7 +24,7 @@ const createWindow = () => {
         }
     });
 
-    win.loadFile('index.html');
+    win.loadFile('./views/index.html');
 }
 
 require('electron-reloader')(module, {
