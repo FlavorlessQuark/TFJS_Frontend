@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain} = require('electron');
+const { app, BrowserWindow, ipcMain, webContents} = require('electron');
 const path = require('node:path');
 const fs = require("fs")
 const {model_data} = require("./data");
@@ -37,7 +37,7 @@ app.whenReady().then(async() => {
 
     createWindow();
     // loaded_model = await tf.loadLayersModel(handler);
-
+    console.log(Object.getOwnPropertyNames(tf.layers))
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0)
             createWindow();
@@ -63,11 +63,12 @@ ipcMain.on("test", async (e, args) => {
     tf.dispose(result.real)
 })
 
-const loadata = async() => {
+const loadata = async(count) => {
     if (!mdata.kinds) {
         console.log("loading data...")
-        await mdata.build(10)
+        await mdata.build(count)
         console.log("loaded data")
+        win.webContents.send("Loaded data")
     }
 }
 
