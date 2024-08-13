@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, webContents} = require('electron');
+const { app, BrowserWindow, ipcMain} = require('electron');
 const path = require('node:path');
 const fs = require("fs")
 const {model_data} = require("./data");
@@ -9,7 +9,7 @@ let win;
 
 // const handler = tf.io.fileSystem("./model/model.json");
 const mdata = new model_data()
-let model;
+let models = {};
 
 
 const createWindow = () => {
@@ -34,7 +34,6 @@ require('electron-reloader')(module, {
 });
 
 app.whenReady().then(async() => {
-
     createWindow();
     // loaded_model = await tf.loadLayersModel(handler);
     console.log(Object.getOwnPropertyNames(tf.layers))
@@ -73,41 +72,57 @@ const loadata = async(count) => {
 }
 
 ipcMain.on("load", async (e, args) => {
-    await loadata()
+    await loadata(args.count)
 })
 
-ipcMain.on("eval", async (e, args) => {
-    if (!model) {
-        await loadata()
-        if (fs.existsSync("./model/model.json")) {
-            console.log("found existing mode")
-            // const handler = tf.io.fileSystem("./model/model.json");
-            model = await tf.loadLayersModel('file://./model/model.json');
-            console.log("loaded mode")
-            const optimizer = tf.train.adam();
-            model.compile({
-                  optimizer: optimizer,
-                    loss: 'categoricalCrossentropy',
-                    metrics: ['accuracy'],
-            })
-            console.log("compiled mode")
+ipcMain.on("create", async (e, args) => {
 
-        }
-        else {
-            model = build_model(mdata)
-            console.log("loaded new model")
-        }
-    }
-    try {
-        for (let i = 0; i < 50; i++) {
-            console.log(" ITERATION %d OF %d", i + 1, 50)
-            await train_model(model, mdata)
-
-            model.save('file://./model');
-        }
-
-    }
-    catch(err) {
-        console.log("error taining model", err)
-    }
 })
+
+ipcMain.on("add", async (e, args) => {
+
+})
+
+ipcMain.on("reset", async (e, args) => {
+
+})
+
+ipcMain.on("delete", async (e, args) => {
+
+})
+
+// ipcMain.on("eval", async (e, args) => {
+//     if (!model) {
+//         await loadata()
+//         if (fs.existsSync("./model/model.json")) {
+//             console.log("found existing mode")
+//             // const handler = tf.io.fileSystem("./model/model.json");
+//             model = await tf.loadLayersModel('file://./model/model.json');
+//             console.log("loaded mode")
+//             const optimizer = tf.train.adam();
+//             model.compile({
+//                   optimizer: optimizer,
+//                     loss: 'categoricalCrossentropy',
+//                     metrics: ['accuracy'],
+//             })
+//             console.log("compiled mode")
+
+//         }
+//         else {
+//             model = build_model(mdata)
+//             console.log("loaded new model")
+//         }
+//     }
+//     try {
+//         for (let i = 0; i < 50; i++) {
+//             console.log(" ITERATION %d OF %d", i + 1, 50)
+//             await train_model(model, mdata)
+
+//             model.save('file://./model');
+//         }
+
+//     }
+//     catch(err) {
+//         console.log("error taining model", err)
+//     }
+// })
