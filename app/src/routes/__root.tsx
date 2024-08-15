@@ -16,7 +16,13 @@ export const Route: any = createRootRoute({
         </Layout>
       </Authenticated>
       <Unauthenticated>
-        <SignInForm/>
+        <div className="h-screen w-screen flex justify-center items-center flex-col">
+          <div className={'flex flex-row justify-start items-center space-x-2 mb-2'}>
+            <img src="./flowvex.png" alt="convex" className={'h-8 w-8'} />
+            <h1 className="text-2xl font-normal card-title">Flowvex</h1>
+          </div>
+          <SignInForm/>
+        </div>
       </Unauthenticated>
     </>
   ),
