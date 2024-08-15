@@ -16,9 +16,21 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
+const ContainersLazyImport = createFileRoute('/containers')()
+const CommunityLazyImport = createFileRoute('/community')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const ContainersLazyRoute = ContainersLazyImport.update({
+  path: '/containers',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/containers.lazy').then((d) => d.Route))
+
+const CommunityLazyRoute = CommunityLazyImport.update({
+  path: '/community',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/community.lazy').then((d) => d.Route))
 
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
@@ -36,12 +48,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/community': {
+      id: '/community'
+      path: '/community'
+      fullPath: '/community'
+      preLoaderRoute: typeof CommunityLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/containers': {
+      id: '/containers'
+      path: '/containers'
+      fullPath: '/containers'
+      preLoaderRoute: typeof ContainersLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({ IndexLazyRoute })
+export const routeTree = rootRoute.addChildren({
+  IndexLazyRoute,
+  CommunityLazyRoute,
+  ContainersLazyRoute,
+})
 
 /* prettier-ignore-end */
 
@@ -51,11 +81,19 @@ export const routeTree = rootRoute.addChildren({ IndexLazyRoute })
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/community",
+        "/containers"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/community": {
+      "filePath": "community.lazy.tsx"
+    },
+    "/containers": {
+      "filePath": "containers.lazy.tsx"
     }
   }
 }

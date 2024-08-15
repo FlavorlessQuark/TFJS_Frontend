@@ -72,4 +72,8 @@
     h1, h2, h3, h4, h5, h6 {
         @apply font-heading;
     }
+
+    .card-title {
+        font-family: IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+    }
 }

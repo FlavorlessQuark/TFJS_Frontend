@@ -1,11 +1,12 @@
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import { Menu, Plus, Search } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import Header from "@/components/layout/header.tsx";
 import UserSelector from "@/components/layout/user-selector.tsx";
 import NavList from "@/components/layout/nav-list.tsx";
+import AddContainerDialog from "@/components/AddContainerDialog.tsx";
 
 const MobileSidebar = () => {
   return (
@@ -58,12 +59,7 @@ const MobileSidebar = () => {
           </div>
         </form>
       </div>
-      <Button className='lg:flex hidden shrink-0 h-9 bg-background text-zinc-100 hover:bg-background/70'>
-        Add model
-      </Button>
-      <Button size='icon' className='lg:hidden flex shrink-0 h-9 w-9 bg-muted'>
-        <Plus className='stroke-accent-foreground h-4 w-4' />
-      </Button>
+      <AddContainerDialog />
     </header>
   )
 }
