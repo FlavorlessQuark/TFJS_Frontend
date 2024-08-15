@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "@tanstack/react-router": "^1.48.1"
-  },
-  "devDependencies": {
-    "@tanstack/router-devtools": "^1.48.1",
-    "@tanstack/router-plugin": "^1.47.0"
-  }
-}
