@@ -1,5 +1,5 @@
 "use node"
-import { internalAction, mutation, action } from "./_generated/server";
+import { action } from "./_generated/server";
 import tf from "@tensorflow/tfjs"
 import { build_model } from "./tensorflow/tf_model";
 
