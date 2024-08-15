@@ -11,11 +11,11 @@ export function SignInForm() {
   const [step, setStep] = useState<"signIn" | "linkSent">("signIn");
 
   return (
-    <div className="container my-auto">
-      <div className="max-w-[384px] mx-auto flex flex-col my-auto gap-4 pb-8">
+    <div className="">
+      <div className="w-[450px] mx-auto flex flex-col my-auto gap-4">
         {step === "signIn" ? (
           <>
-            <h2 className="font-semibold text-2xl tracking-tight">
+            <h2 className="font-normal text-2xl tracking-tight">
               Sign in or create an account
             </h2>
             <SignInWithGitHub />
