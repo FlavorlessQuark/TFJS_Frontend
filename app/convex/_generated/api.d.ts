@@ -16,6 +16,8 @@ import type {
 } from "convex/server";
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
+import type * as tensorflow_tf_model from "../tensorflow/tf_model.js";
+import type * as tensorflow_fn from "../tensorflow_fn.js";
 import type * as users from "../users.js";
 
 /**
@@ -29,6 +31,8 @@ import type * as users from "../users.js";
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
+  "tensorflow/tf_model": typeof tensorflow_tf_model;
+  tensorflow_fn: typeof tensorflow_fn;
   users: typeof users;
 }>;
 export declare const api: FilterApi<
