@@ -8,6 +8,7 @@ export const save_layer = mutation({
     params: v.array(
         v.object({
             name: v.string(),
+            desc: v.string(),
             type: v.string()
     }))},
   handler: async (ctx, args) => {
