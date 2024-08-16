@@ -1,18 +1,19 @@
 "use node"
-import { action } from "./_generated/server";
+import { action, mutation } from "./_generated/server";
 import tf from "@tensorflow/tfjs"
-import { build_model } from "./tensorflow/tf_model";
+import { v } from "convex/values";
+import { any } from "prop-types";
 
 const models: Array<tf.LayersModel> = []
 
-export const _createModelAction = action({
+export const list_layers = action({
   args: {},
   handler: async () => {
-    const model:tf.LayersModel = build_model()
-    models.push(model)
-    // do something with data\
-    console.log("Total models created", models.length)
-    return models.length;
+
+    return Object.getOwnPropertyNames(tf.layers).filter(function(property) {
+        return typeof ((tf.layers as any)[property]) == 'function';
+    });
   },
 });
+
 
