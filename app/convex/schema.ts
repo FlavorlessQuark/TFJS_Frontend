@@ -34,6 +34,7 @@ export default defineSchema({
         params: v.array(
             v.object({
                 name: v.string(),
+                desc: v.string(),
                 type: v.string()
         }))
     })

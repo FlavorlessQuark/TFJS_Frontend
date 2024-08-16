@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import {Box, Boxes, Home} from "lucide-react";
+import {Box, Boxes, Home, TerminalIcon} from "lucide-react";
 import {cn} from "@/lib/utils.ts";
 
 const NavList = () => {
@@ -21,6 +21,11 @@ const NavList = () => {
       name: "Community",
       icon: Boxes,
       href: "/community",
+    },
+    {
+      name: "Test",
+      icon: TerminalIcon,
+      href: "/testing",
     },
   ];
 
