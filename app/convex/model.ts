@@ -9,10 +9,11 @@ export const save_layer = mutation({
         v.object({
             name: v.string(),
             desc: v.string(),
-            type: v.string()
+            type: v.array(v.string()),
+            options: v.optional(v.array(v.string()))
     }))},
   handler: async (ctx, args) => {
-    await ctx.db.insert("layerTypes", {name: args.name, params: args.params})
+    await ctx.db.insert("layerTypes", args)
 
   },
 });

@@ -35,7 +35,7 @@ export default defineSchema({
             v.object({
                 name: v.string(),
                 desc: v.string(),
-                type: v.string(),
+                type: v.array(v.string()),
                 options: v.optional(v.array(v.string()))
         }))
     })
