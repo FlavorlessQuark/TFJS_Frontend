@@ -78,7 +78,7 @@ const AddContainerDialog = () => {
     <Dialog open={state.openContainerModal} onOpenChange={onClose}>
       <DialogTrigger>
         <Button>
-          Add Modal
+          Add Container
         </Button>
       </DialogTrigger>
       <DialogContent className={'p-10 !bg-muted/10'}>
@@ -107,7 +107,7 @@ const AddContainerDialog = () => {
                 </div>
 
                 <div className="grid w-2/3 items-center gap-1.5">
-                  <Label htmlFor="email" className={'text-zinc-200 font-thin'}>Model Name</Label>
+                  <Label htmlFor="email" className={'text-zinc-200 font-thin'}>Container Name</Label>
                   <FormField
                     control={form.control}
                     name="name"
@@ -172,7 +172,7 @@ const AddContainerDialog = () => {
                                   <div className={'flex flex-col justify-center items-start space-y-1'}>
                                     <span>Private</span>
                                     <span className={'text-zinc-500 font-thin'}>
-                                      Only you (private model) or users you share with (shared model) can see and commit to this model.
+                                      Only you  or users you share with can see and commit to this container.
                                     </span>
                                   </div>
                                 </div>
@@ -188,7 +188,7 @@ const AddContainerDialog = () => {
                                   <div className={'flex flex-col justify-center items-start space-y-1'}>
                                     <span>Public</span>
                                     <span className={' text-zinc-500 font-thin'}>
-                                      Anyone in the community can see this container. Only you (private model) or users you share with (shared model) can commit.</span>
+                                      Anyone in the community can see this container. Only you  or users you share with can commit.</span>
                                   </div>
                                 </div>
                               </FormLabel>
@@ -203,7 +203,7 @@ const AddContainerDialog = () => {
               </div>
 
               <div className={'my-4 w-4/5 p-4 border border-muted bg-accent/50 rounded-xl text-sm flex items-center justify-center text-zinc-200'}>
-                Once your model is created, you can upload your files using the web interface.
+                Once your container is created, you can upload your files using the web interface.
               </div>
 
               <div className={'w-4/5 flex items-end justify-end'}>
