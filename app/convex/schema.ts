@@ -10,7 +10,7 @@ export default defineSchema({
     creator: v.id("users"),
     likes: v.optional(v.array(v.id("users"))),
     tags: v.optional(v.array(v.string())),
-    model: v.optional(v.array(v.id("model"))),
+    models: v.optional(v.array(v.id("model"))),
     dataset: v.optional(v.any()),
     public: v.boolean(), // false by default
     sharedWith: v.optional(v.array(v.id("users"))),
@@ -28,15 +28,4 @@ export default defineSchema({
             }
         ))
     }),
-
-    layerTypes : defineTable({
-        name: v.string(),
-        params: v.array(
-            v.object({
-                name: v.string(),
-                desc: v.string(),
-                type: v.array(v.string()),
-                options: v.optional(v.array(v.string()))
-        }))
-    })
 });
