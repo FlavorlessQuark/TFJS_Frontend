@@ -38,7 +38,7 @@ export async function allowed(ctx : QueryCtx | MutationCtx, id: Id<"container">)
     });
   }
 
-  const allowed = container.sharedWith?.some((id) => id == userId);
+  const allowed = container.sharedWith?.some((id) => id == userId) ||  container.creator == userId;
 
   if (!allowed) {
     throw new ConvexError({
