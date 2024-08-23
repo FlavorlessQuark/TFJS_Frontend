@@ -54,14 +54,14 @@ const UserSelector = () => {
                     </>
                 )}
               </Avatar>
-              <span className={'font-normal'}>
+              <span className={'font-normal text-accent-foreground'}>
                 {user?.name}
               </span>
             </div>
           </Button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="bg-zinc-900 w-80 rounded-xl mr-0 mt-2 ml-2">
+        <DropdownMenuContent className="bg-background w-80 mr-0 ml-4">
           <DropdownMenuGroup>
             {menuItems.map((item, index) => (
               <div key={index}>

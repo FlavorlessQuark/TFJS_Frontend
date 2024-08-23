@@ -16,7 +16,7 @@ const Sidebar = () => {
         <Card x-chunk="dashboard-02-chunk-0">
           <CardHeader className="p-2 pt-0 md:p-4">
             <CardTitle className="flex flex-row gap-x-2 items-center">
-              <img src="./convex.svg" alt="convex" className="h-6 w-6"/> Powered by Convex
+              <img src="/convex.svg" alt="convex" className="h-6 w-6"/> Powered by Convex
             </CardTitle>
             <CardDescription>
               A complete, reactive, typesafe backend with authentication and file storage.

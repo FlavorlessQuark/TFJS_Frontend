@@ -25,7 +25,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {Separator} from "@/components/ui/separator.tsx";
 
-
 const FormSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
@@ -52,19 +51,22 @@ const AddContainerDialog = () => {
     },
   })
 
-  function onSubmit(values: z.infer<typeof FormSchema>) {
+  async function onSubmit(values: z.infer<typeof FormSchema>) {
     console.log("values", values);
 
-    createContainer({
+    await createContainer({
       name: values.name,
       description: values.description,
       public: values.public
-    }).then()
+    }).then(() => {
+      toast.success(`${values.name} created successfully.`)
+    }).catch((error) => {
+      toast.error(`Error: ${error.message}`)
+    });
 
-    toast(`${values.name} created successfully.`)
+    form.reset();
 
     setState("openContainerModal", false);
-    form.reset();
   }
 
   const onClose = (open: boolean) => {
@@ -81,9 +83,9 @@ const AddContainerDialog = () => {
           Add Container
         </Button>
       </DialogTrigger>
-      <DialogContent className={'p-10 !bg-muted/10'}>
+      <DialogContent className={'p-10 !app-bg'}>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} >
+          <form onSubmit={() => void form.handleSubmit(onSubmit)} >
             <div className={'flex flex-col justify-center items-center gap-4'}>
               <Box className={'w-10 h-10 stroke-indigo-700'}/>
               <div className={'flex flex-col justify-center items-center gap-1'}>

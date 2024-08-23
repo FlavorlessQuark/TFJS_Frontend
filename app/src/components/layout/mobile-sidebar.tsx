@@ -32,7 +32,7 @@ const MobileSidebar = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex flex-row gap-x-2 items-center">
-                  <img src="./convex.svg" alt="convex" className="h-6 w-6"/> Powered by Convex
+                  <img src="/convex.svg" alt="convex" className="h-6 w-6"/> Powered by Convex
                 </CardTitle>
                 <CardDescription>
                   A complete, reactive, typesafe backend with authentication and file storage.

@@ -18,14 +18,14 @@ export default defineSchema({
     .index("by_creator", ["creator"])
     .index("by_public", ["public"]),
     model : defineTable({
+      name: v.string(),
+      layers: v.array(v.object({
         name: v.string(),
-        layers: v.array(v.object({
-            name: v.string(),
-            parameters: v.array(v.object({
-                        name: v.string(),
-                        value: v.union(v.string(), v.number(), v.array(v.number()), v.boolean())
-                }))
-            }
-        ))
+        parameters: v.array(v.object({
+          name: v.string(),
+          value: v.union(v.string(), v.number(), v.array(v.number()), v.boolean())
+        }))
+      }
+      ))
     }),
 });

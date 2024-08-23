@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 type State = {
   openContainerModal: boolean;
+  openModelLayer: boolean;
 };
 
 type StateContextType = {
@@ -14,6 +15,7 @@ const StateContext = createContext<StateContextType | undefined>(undefined);
 export const StateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, setInternalState] = useState<State>({
     openContainerModal: false,
+    openModelLayer: false,
   });
 
   const setState = (key: keyof State, value: any) => {

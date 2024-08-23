@@ -1,19 +1,27 @@
-import { createRootRoute, Outlet } from '@tanstack/react-router'
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { QueryClient } from '@tanstack/react-query';
 import {Authenticated, Unauthenticated} from "convex/react";
 import {Layout} from "@/Layout.tsx";
 import {SignInForm} from "@/SignInForm.tsx";
+import {TooltipProvider} from "@/components/ui/tooltip.tsx";
 
-export const Route: any = createRootRoute({
+export const Route: any = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
   component: () => (
     <>
       <Authenticated>
-        <Layout>
-          <Outlet />
+        <TooltipProvider>
+          <Layout>
+            <Outlet />
 
-          {/* Use this for Dev only */}
-          <TanStackRouterDevtools />
-        </Layout>
+            {/* Use this for Dev only */}
+            <ReactQueryDevtools buttonPosition="top-right" />
+            <TanStackRouterDevtools position="bottom-right" />
+          </Layout>
+        </TooltipProvider>
       </Authenticated>
       <Unauthenticated>
         <div className="h-screen w-screen flex justify-center items-center flex-col">
