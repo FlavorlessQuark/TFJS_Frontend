@@ -28,4 +28,14 @@ export default defineSchema({
       }
       ))
     }),
+    layerTypes : defineTable({
+        name: v.string(),
+        params: v.array(
+            v.object({
+                name: v.string(),
+                desc: v.string(),
+                type: v.array(v.string()),
+                options: v.optional(v.array(v.string()))
+        }))
+    })
 });

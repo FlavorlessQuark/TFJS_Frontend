@@ -170,6 +170,7 @@ export const createContainerModel = mutation({
 
             await ctx.db.patch(args.id, {models: container?.models})
         }
+        return {_id: model, name: args.name, layers: []};
     }
 })
 
