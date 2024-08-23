@@ -46,16 +46,21 @@ export const deleteContainer = mutation({
     id: v.id("container"),
   },
   async handler(ctx, args) {
-     await confirmAuth(ctx);
+    const identity = await confirmAuth(ctx);
 
-    const models = (await ctx.db.get(args.id))?.models
 
-    if (models) {
-        for (let model of models)
-            await ctx.db.delete(model)
+    const container = (await ctx.db.get(args.id))
+
+    if (container && container.creator == identity) {
+        const models  = container?.models
+
+        if (models) {
+            for (let model of models)
+                await ctx.db.delete(model)
+        }
+
+        await ctx.db.delete(args.id)
     }
-
-    await ctx.db.delete(args.id)
 
   }
 });
@@ -80,6 +85,24 @@ export const getMyContainers = query({
   }
 });
 
+
+export const getContainer = query({
+    args: {
+        id: v.id("container")
+    },
+    handler: async(ctx, args) => {
+        const identity = await confirmAuth(ctx);
+        const container = await ctx.db.get(args.id)
+
+        if (container && (container.public || container.creator == identity || container.sharedWith?.includes(identity)))
+        {
+            return container
+        }
+
+        return null;
+    }
+})
+
 export const getCommunityContainers = query({
   args: {},
   async handler(ctx) {
@@ -99,13 +122,16 @@ export const createContainerModel = mutation({
         name: v.string(),
     },
     handler: async(ctx, args) => {
+        const identity = await confirmAuth(ctx)
         const model = await ctx.db.insert("model", {name: args.name, layers: []})
 
         const container = await ctx.db.get(args.id)
 
-        container?.models?.push(model)
+        if (container && container.creator == identity) {
+            container.models?.push(model)
 
-        await ctx.db.patch(args.id, {models: container?.models})
+            await ctx.db.patch(args.id, {models: container?.models})
+        }
     }
 })
 
@@ -115,12 +141,16 @@ export const deleteContainerModel = mutation({
         modelId: v.id("model"),
     },
     handler: async(ctx, args) => {
+        const identity = await confirmAuth(ctx)
+
         const container = await ctx.db.get(args.containerId)
 
-        const models = container?.models?.filter((id) => id != args.modelId)
+        if (container && container.creator == identity) {
+            const models = container?.models?.filter((id) => id != args.modelId)
 
-        await ctx.db.patch(args.containerId, {models});
-        await ctx.db.delete(args.modelId);
+            await ctx.db.patch(args.containerId, {models});
+            await ctx.db.delete(args.modelId);
+        }
     }
 })
 
