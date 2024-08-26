@@ -21,6 +21,7 @@ export const createContainer = mutation({
   async handler(ctx, args) {
     const userId = await user(ctx);
 
+
     return await ctx.db.insert("container", {
       ...args,
       sharedWith: [userId],
@@ -161,14 +162,18 @@ export const createContainerModel = mutation({
     handler: async(ctx, args) => {
         const userId = await user(ctx);
 
+
         const model = await ctx.db.insert("model", {name: args.name, layers: []})
 
         const container = await ctx.db.get(args.id)
 
-        if (container && container.creator == userId) {
-            container.models?.push(model)
 
-            await ctx.db.patch(args.id, {models: container?.models})
+        if (container && container.creator == userId) {
+            if (!container.models)
+                container.models = []
+            container.models.push(model)
+
+            await ctx.db.patch(args.id, {models: container.models})
         }
         return {_id: model, name: args.name, layers: []};
     }
