@@ -25,6 +25,14 @@ export const saveLayers = mutation({
 export const getLayers = query({
     args: {},
     handler: async (ctx, _) => {
-        return await ctx.db.query("layerTypes").collect()
+        const types = await ctx.db.query("layerTypes").collect()
+
+        const dict = Object.fromEntries(types.map((item) => [item.name, item.params]))
+
+        const returnDict:any = {}
+        for (const key of Object.keys(dict)) {
+            returnDict[key] = Object.fromEntries(dict[key].map((item) => [item.name, item]))
+        }
+        return returnDict
     }
 })
