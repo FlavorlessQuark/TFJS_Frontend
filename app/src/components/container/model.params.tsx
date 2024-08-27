@@ -14,12 +14,16 @@ const ModelParams = ({params}) => {
 
     return (
         <div>
-            <Select  onValueChange={(e) => setSelectedParam(e)}>
+            <Select onValueChange={(e) => {
+                const index = params ? Object.keys(params).indexOf(e) : -1;
+                console.log("E", e, "Index", index);
+                setSelectedParam(e);
+                }}>
                 <SelectTrigger  id="model" className="items-start [&_[data-description]]:hidden">
                     <SelectValue  placeholder="Select a parameter"/>
                 </SelectTrigger>
                 <SelectContent>
-                    { params && Object.keys(params).map((key) =>
+                    {params && Object.keys(params).map((key) =>
                         <>
                             <SelectItem key={key} value={key}  >
                                 {key}
