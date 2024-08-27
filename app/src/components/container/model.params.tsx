@@ -1,56 +1,48 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useGlobalState } from "@/providers/StateProvider";
-import { useMutation } from "convex/react";
-import { useState } from "react";
-import { api } from "../../../convex/_generated/api";
-import { Button } from "../ui/button";
 
-const ModelParams = ({params}) => {
-  const [selectedParam, setSelectedParam] = useState("")
-  const [selectedParamValue, setSelectedParamValue] = useState("")
-  const [selectedType, setSelectedType] = useState("")
-
-
+const ModelParamValue = ({selectedType, setSelectedParamValue, options}) =>
+{
     return (
-        <div>
-            <Select onValueChange={(e) => {
-                const index = params ? Object.keys(params).indexOf(e) : -1;
-                console.log("E", e, "Index", index);
-                setSelectedParam(e);
-                }}>
-                <SelectTrigger  id="model" className="items-start [&_[data-description]]:hidden">
-                    <SelectValue  placeholder="Select a parameter"/>
-                </SelectTrigger>
-                <SelectContent>
-                    {params && Object.keys(params).map((key) =>
-                        <>
-                            <SelectItem key={key} value={key}  >
-                                {key}
-                            </SelectItem>
-                        </>
-                    )}
-                </SelectContent>
-            </Select>
-            {/* {
-                <Select  onValueChange={(e) => setSelectedParam(e)}>
-                <SelectTrigger  id="model" className="items-start [&_[data-description]]:hidden">
-                    <SelectValue  placeholder="Select a type"/>
-                </SelectTrigger>
-                <SelectContent>
-                    {layerAttrs &&  layerAttrs[layer.name] && layerAttrs[layer.name][selectedParam] && layerAttrs[layer.name][selectedParam].type.map((type) =>
-                        <>
-                            <SelectItem key={type} value={type}  >
-                                {type}
-                            </SelectItem>
-                        </>
-                    )}
-                </SelectContent>
-            </Select>
+        <>
+            { selectedType == "number" &&
+                    <div>
+                        <input onChange={(e) => setSelectedParamValue(parseInt(e.target.value))} type="number"></input>
+                    </div>
+            }
+            { selectedType == "string" &&
+                    <Select  onValueChange={(e) => {setSelectedParamValue(e);}}>
+                        <SelectTrigger  id="model" className="items-start [&_[data-description]]:hidden">
+                            <SelectValue  placeholder="Select a value"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            {options.map((option:string) =>
+                                <>
+                                    <SelectItem key={option} value={option}  >
+                                        {option}
+                                    </SelectItem>
+                                </>
+                            )}
+                        </SelectContent>
+                    </Select>
+            }
+            {
+                selectedType == "[]" &&
+                    <div>
+                        <input defaultValue={"Enter comma separated values"} onChange={(e) =>
+                            {
+                                const strArr = e.target.value.split(",");
+                                setSelectedParamValue(strArr.map(Number));
+                            }
+                        } type="text"></input>
+                    </div>
+            }
+            {
+                selectedType == "Tensor" &&
+                    <div>Not yet supported</div>
+            }
+        </>
 
-            } */}
-        </div>
     )
 }
 
-export default ModelParams
+export default ModelParamValue

@@ -5,15 +5,18 @@ import { useMutation } from "convex/react";
 import { useState } from "react";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "../ui/button";
-import ModelParams from "./model.params";
+import ModelParams from "./model.layer";
+import ModelLayer from "./model.layer";
+import { Await } from "@tanstack/react-router";
 
 const ModelContainer = ({layerAttrs, model}) => {
   const { state, setState } = useGlobalState();
   const [selectedLayer, setSelectedLayer] = useState("")
+  const [params, setParams] = useState({})
 
-  const addLayer = useMutation(api.container.saveContainerModel)
+  const saveModel = useMutation(api.container.saveContainerModel)
 
-  const addSelectedLayer = async(e) => {
+    const addSelectedLayer = async(e) => {
         e.preventDefault();
         if (selectedLayer != "") {
             if (!model.layers)
@@ -23,9 +26,18 @@ const ModelContainer = ({layerAttrs, model}) => {
 
             console.log("updating model", model)
 
-            await addLayer({id:model._id,layers:model.layers})
+            await saveModel({id:model._id,layers:model.layers})
         }
-  }
+    }
+
+    const saveLayer = async(e, layerIdx, params) => {
+        e.preventDefault()
+
+        model.layers[layerIdx].parameters.push(params)
+
+        await saveModel({id:model._id, layers:model.layers})
+    }
+
   console.log(layerAttrs)
 
   return (
@@ -36,8 +48,9 @@ const ModelContainer = ({layerAttrs, model}) => {
         </legend>
         <div className="grid gap-3">
             {
-                    model.layers.map((layer, i) => (
+                    model.layers && model.layers.map((layer, i) => (
                     <Accordion
+                        key={i}
                         type="single"
                         collapsible
                         value={state.openModelLayer ? '1' : undefined}
@@ -48,8 +61,11 @@ const ModelContainer = ({layerAttrs, model}) => {
                                 <span className="font-medium">{layer.name}</span>
                             </AccordionTrigger>
                             <AccordionContent>
-                                <ModelParams params={layerAttrs[layer.name]}/>
-                                <Button> Add param</Button>
+                                {layer.parameters.map((e) => (
+                                    <div> {e.name} : {e.value}</div>
+                                ))}
+                                {layerAttrs && <ModelLayer layer={layer} layerIdx={i} params={layerAttrs[layer.name]} addToLayer={saveLayer}/>}
+                                {/* <Button onClick={(e) => addSelect/edParam(e, i)}> Add param</Button> */}
                         </AccordionContent>
                         </AccordionItem>
                     </Accordion>
