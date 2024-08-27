@@ -4,7 +4,7 @@ import {
   ThumbsUp,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {useQuery} from "convex/react";
+import {useMutation, useQuery} from "convex/react";
 import {api} from "../../../convex/_generated/api";
 import ModelDrawer from "@/components/container/mobile-drawer";
 import ModelContainer from "@/components/container/model-container";
@@ -23,10 +23,15 @@ function ContainerId() {
   const { containerId } = Route.useParams();
 
   const container = useQuery(api.container.getContainer, { id: containerId }) || undefined;
+  const addModel = useMutation(api.container.createContainerModel)
+  const models = useQuery(api.container.getContainerModels,{id: containerId})
+  const layerAttrs = useQuery(api.layers.getLayers)
 
   if (!container) {
     return;
   }
+
+  console.log('Caontginer', container, models)
 
   return (
     <main className="grid h-full w-full">
@@ -59,15 +64,14 @@ function ContainerId() {
             </div>
           </header>
           <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3">
-            <div
-              className="relative hidden flex-col items-start gap-8 md:flex" x-chunk="dashboard-03-chunk-0"
-            >
-              <ModelContainer container={container} />
+            <div className="relative hidden flex-col items-start gap-8 md:flex" x-chunk="dashboard-03-chunk-0">
+                { models && models.map((elem) => (
+                    <ModelContainer key={elem.name} layerAttrs={layerAttrs} model={elem} />
+                    ))
+                }
             </div>
             <div className="relative grid grid-cols-2 justify-center items-center h-full min-h-[50vh] rounded-xl bg-transparent lg:col-span-2">
-              <div className={'col-span-1 relative flex justify-center items-center h-full min-h-[50vh] rounded-xl bg-neutral-900 border border-zinc-800 border-dashed'}>
-                Add Modal
-              </div>
+              <Button onClick={async() => await addModel({id:container._id, name:"test"})}> Add model</Button>
             </div>
           </main>
         </div>
