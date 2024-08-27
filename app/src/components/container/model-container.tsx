@@ -1,41 +1,42 @@
-import {Label} from "@/components/ui/label";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Rabbit} from "lucide-react";
-import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
-import {useGlobalState} from "@/providers/StateProvider";
-import {cn} from "@/lib/utils.ts";
-import {demoModels} from "@/lib/constants.ts";
-import { Button } from "../ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useGlobalState } from "@/providers/StateProvider";
+import { useMutation } from "convex/react";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 import { api } from "../../../convex/_generated/api";
+import { Button } from "../ui/button";
+import ModelParams from "./model.params";
 
 const ModelContainer = ({layerAttrs, model}) => {
   const { state, setState } = useGlobalState();
-  const [selected, setSelected] = useState("")
+  const [selectedLayer, setSelectedLayer] = useState("")
+
   const addLayer = useMutation(api.container.saveContainerModel)
-  console.log("container in model container", layerAttrs);
-  const layers = [];
 
   const addSelectedLayer = async(e) => {
         e.preventDefault();
-        if (selected != "") {
+        if (selectedLayer != "") {
             if (!model.layers)
                 model.layers = []
 
-            model.layers.push({name: selected, parameters: []})
-            await addLayer(model)
+            model.layers.push({name: selectedLayer, parameters: []})
+
+            console.log("updating model", model)
+
+            await addLayer({id:model._id,layers:model.layers})
         }
   }
+  console.log(layerAttrs)
 
   return (
+    <form className="grid w-full items-start gap-6">
       <fieldset className="grid gap-6 rounded-lg border p-4">
         <legend className="-ml-1 px-1 text-sm font-medium">
           {model.name}
         </legend>
         <div className="grid gap-3">
             {
-                    model.layers && model.layers.map((layer, i) => {
+                    model.layers.map((layer, i) => (
                     <Accordion
                         type="single"
                         collapsible
@@ -43,41 +44,35 @@ const ModelContainer = ({layerAttrs, model}) => {
                         onValueChange={(value) => setState("openModelLayer", value === '1')}
                     >
                         <AccordionItem value={i}>
-                        <AccordionTrigger className={'mb-1'}>
-                            <span className="font-medium">{layer.name}</span>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <nav className={'grid items-start gap-0.5'}>
-                                {layers.length < 1 && (
-                                <div className={cn("text-xs cursor-default text-foreground/50 p-2 ml-3")}>
-                                    <Button>
-                                        Add param
-                                    </Button>
-                                </div>
-                                )}
-                            </nav>
+                            <AccordionTrigger className={'mb-1'}>
+                                <span className="font-medium">{layer.name}</span>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <ModelParams params={layerAttrs[layer.name]}/>
+                                <Button> Add param</Button>
                         </AccordionContent>
                         </AccordionItem>
                     </Accordion>
-                })
+                    ))
             }
             <div>
-                <Select >
+                <Select  onValueChange={(e) => setSelectedLayer(e)}>
                     <SelectTrigger  id="model" className="items-start [&_[data-description]]:hidden">
-                        <SelectValue placeholder="Select a layer"/>
+                        <SelectValue  placeholder="Select a layer"/>
                     </SelectTrigger>
-                    <SelectContent >
-                        {layerAttrs && layerAttrs.map((layer) =>
-                            <SelectItem key={layer.name} value={layer.name}>
-                                {layer.name}
+                    <SelectContent>
+                        {layerAttrs && Object.keys(layerAttrs).map((key) =>
+                            <SelectItem key={key} value={key}>
+                                {key}
                             </SelectItem>
                         )}
                     </SelectContent>
                 </Select>
-                <Button onClick={(e) => addLayer(e)}> Add</Button>
+                <Button onClick={(e) => addSelectedLayer(e)}> Add</Button>
             </div>
         </div>
       </fieldset>
+    </form>
   )
 }
 

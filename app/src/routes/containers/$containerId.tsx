@@ -65,8 +65,8 @@ function ContainerId() {
           </header>
           <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3">
             <div className="relative hidden flex-col items-start gap-8 md:flex" x-chunk="dashboard-03-chunk-0">
-                { models && models.map((elem) => (
-                    <ModelContainer key={elem.name} layerAttrs={layerAttrs} model={elem} />
+                { models && models.map((elem, i) => (
+                    <ModelContainer key={elem.name + i} layerAttrs={layerAttrs} model={elem} />
                     ))
                 }
             </div>
