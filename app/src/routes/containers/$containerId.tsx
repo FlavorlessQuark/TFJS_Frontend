@@ -4,7 +4,7 @@ import {
   ThumbsUp,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {useMutation, useQuery} from "convex/react";
+import {useAction, useMutation, useQuery} from "convex/react";
 import {api} from "../../../convex/_generated/api";
 import ModelDrawer from "@/components/container/mobile-drawer";
 import ModelContainer from "@/components/container/model-container";
@@ -22,6 +22,7 @@ export const Route: any = createFileRoute('/containers/$containerId')({
 function ContainerId() {
   const { containerId } = Route.useParams();
 
+  const testRun = useAction(api.tensorflow_fn.run_model)
   const container = useQuery(api.container.getContainer, { id: containerId }) || undefined;
   const addModel = useMutation(api.container.createContainerModel)
   const models = useQuery(api.container.getContainerModels,{id: containerId})
@@ -66,7 +67,10 @@ function ContainerId() {
           <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3">
             <div className="relative hidden flex-col items-start gap-8 md:flex" x-chunk="dashboard-03-chunk-0">
                 { models && models.map((elem, i) => (
-                    <ModelContainer key={elem.name + i} layerAttrs={layerAttrs} model={elem} />
+                    elem && <div>
+                        <ModelContainer key={elem.name + i} layerAttrs={layerAttrs} model={elem} />
+                        <Button onClick={async () => await testRun({id:elem?._id})}> Run Model (test button)</Button>
+                    </div>
                     ))
                 }
             </div>
