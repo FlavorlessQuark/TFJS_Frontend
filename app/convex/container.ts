@@ -1,4 +1,4 @@
-import {mutation, query } from "./_generated/server";
+import {internalQuery, mutation, query } from "./_generated/server";
 import {ConvexError, v} from "convex/values";
 import { user, allowed } from "./helpers";
 
@@ -214,19 +214,7 @@ export const getContainerModels = query({
     }
 })
 
-/**
- * Get a model by id
- * @param id
- * @returns {Promise<Model>}
- */
-export const getModel = query({
-    args: {
-        id: v.id("model"),
-    },
-    handler: async(ctx, args) => {
-        return await ctx.db.get(args.id)
-    }
-})
+
 
 /**
  * Delete a model from the container

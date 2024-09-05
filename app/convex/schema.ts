@@ -1,6 +1,7 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import { authTables } from "@convex-dev/auth/server";
+import { object } from "prop-types";
 
 export default defineSchema({
   ...authTables,
@@ -24,8 +25,14 @@ export default defineSchema({
         parameters: v.array(v.object({
           name: v.string(),
           value: v.union(v.string(), v.number(), v.array(v.number()), v.boolean())
-        }))
-      }
+            }))
+        }
+      )),
+      logs : v.optional(v.object(
+        {
+            logs: v.array(v.string()),
+            final: v.optional(v.number())
+            }
       ))
     }),
     layerTypes : defineTable({

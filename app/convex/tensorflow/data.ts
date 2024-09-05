@@ -1,6 +1,39 @@
 "use node"
 // const fs = require('fs')
-// const tf = require("@tensorflow/tfjs-node")
+
+import tf from "@tensorflow/tfjs"
+
+type data = {x: Array<number>, y: Array<number>}
+type t_data = {x: tf.Tensor, y: tf.Tensor}
+
+export const make_dummy_data = () => {
+    const TRAIN_LEN = 100
+    const TEST_LEN = 50
+
+
+    let train: data| t_data = {x:[], y : []};
+    let validation : data | t_data = {x:[], y : []};
+    let test : data | t_data = {x:[], y : []};
+
+    for (let i = 0; i < TRAIN_LEN; i++) {
+        train.x.push(i)
+        train.y.push(i * 2)
+
+        validation.x.push(i + TRAIN_LEN)
+        validation.y.push((i + TRAIN_LEN) * 2)
+    }
+
+    for (let i = 0; i < TEST_LEN; i++) {
+        test.x.push(i)
+        test.y.push(i * 2)
+    }
+
+    train = {x : tf.tensor(train.x, [TRAIN_LEN, 1]), y: tf.tensor(train.y, [TRAIN_LEN, 1])}
+    validation = {x : tf.tensor(validation.x, [TRAIN_LEN, 1]), y: tf.tensor(validation.y, [TRAIN_LEN, 1])}
+    test = {x : tf.tensor(test.x, [TEST_LEN, 1]), y: tf.tensor(test.y, [TEST_LEN, 1])}
+
+    return {train,  validation, test}
+}
 
 // class model_data {
 //     constructor() {
