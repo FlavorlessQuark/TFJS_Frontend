@@ -30,12 +30,8 @@ export default defineSchema({
       )),
       logs : v.optional(v.object(
         {
-            logs: v.array(v.object({
-                epoch: v.number(),
-                accuracy: v.number(),
-                validationAccuracy: v.number()
-            })),
-            final: v.number()
+            logs: v.array(v.string()),
+            final: v.optional(v.number())
             }
       ))
     }),

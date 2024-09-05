@@ -1,47 +1,31 @@
 "use node"
 
-const tf = require("@tensorflow/tfjs")
 
+import { mappings } from "./tf_fn_mapping";
+import tf, { layers } from "@tensorflow/tfjs";
 
-export const build_model = () =>
+export const build_model = (model: tf.Sequential,  model_layers:any) =>
 {
-    const model = tf.sequential();
+    model.resetStates()
+    for (const layer of model_layers) {
+        if (layer.name in mappings)
+        {
+            const key = layer.name as keyof typeof mappings;
+            const constructed_params:any = {}
 
-    model.add (tf.layers.conv2d({
-        inputShape: [ 28 , 28, 1],
-        kernelSize: 3,
-        filters: 8,
-        strides:1,
-        activation:"relu",
-        kernelInitializer: "varianceScaling"
-    }));
-    model.add(tf.layers.maxPooling2d({poolSize:[2,2]}));
-     model.add (tf.layers.conv2d({
-        kernelSize: 3,
-        filters: 16,
-        strides:1,
-        activation:"relu",
-        kernelInitializer: "varianceScaling"
-    }));
-    model.add(tf.layers.maxPooling2d({poolSize:[2,2], strides:[2,2]}));
+            layer.parameters.map((param:any) => constructed_params[param.name] = param.value)
 
-    model.add(tf.layers.flatten());
-    model.add(tf.layers.dense({
-        units: 128,
-        kernelnitializer: 'varianceScaling',
-        activation: 'relu'
-    }));
-    model.add(tf.layers.dense({
-        units: 10,
-        kernelnitializer: 'varianceScaling',
-        activation: 'softmax'
-    }));
+            console.log("Name", layer.name, "params", constructed_params)
+
+            model.add(mappings[key](constructed_params));
+        }
+    }
+
     const optimizer = tf.train.adam();
     model.compile({
         optimizer: optimizer,
-        loss: 'categoricalCrossentropy',
+        loss: 'binaryCrossentropy',
         metrics: ['accuracy'],
-    });
 
-  return model;
+    });
 }
