@@ -9,8 +9,9 @@ import {
 import {Button} from "@/components/ui/button.tsx";
 import {Settings} from "lucide-react";
 import ModelContainer from "@/components/container/model-container";
+import { ModelContainerProps } from "@/types";
 
-const ModelDrawer = (container: any) => {
+const ModelDrawer = ({ layerAttrs, model, container }: ModelContainerProps) => {
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -26,7 +27,7 @@ const ModelDrawer = (container: any) => {
             Configure the settings for the model.
           </DrawerDescription>
         </DrawerHeader>
-        <ModelContainer container={container} />
+        <ModelContainer container={container} layerAttrs={layerAttrs} model={model} />
       </DrawerContent>
     </Drawer>
   )

@@ -5,10 +5,11 @@ import {
 } from "@/components/ui/dialog";
 import { useGlobalState } from "@/providers/StateProvider";
 import {Button} from "@/components/ui/button.tsx";
-import {Book, BookLock, Box} from "lucide-react";
+import {Book, BookLock, Box, Plus} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {useMutation, useQuery} from "convex/react";
+import {useQuery} from "convex/react";
+import { Tag, TagInput } from 'emblor';
 import {api} from "../../convex/_generated/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -24,6 +25,8 @@ import { toast } from "sonner"
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {Separator} from "@/components/ui/separator.tsx";
+import { useCreateContainer } from "@/hooks/container/use-create-container";
+import { useState } from "react";
 
 const FormSchema = z.object({
   name: z.string().min(2, {
@@ -32,14 +35,15 @@ const FormSchema = z.object({
   description: z.string().min(5, {
     message: "Description must be at least 5 characters.",
   }),
-  tags: z.array(z.string()).optional(),
+  tags: z.array(z.object({ id: z.string(), text: z.string() })).optional(),
   public: z.boolean(),
 })
 
 const AddContainerDialog = () => {
   const { state, setState } = useGlobalState();
   const user = useQuery(api.users.viewer);
-  const createContainer = useMutation(api.container.createContainer);
+  const { mutate, isLoading } = useCreateContainer();
+  const [tags, setTags] = useState<Tag[]>([]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -53,24 +57,31 @@ const AddContainerDialog = () => {
 
   async function onSubmit(values: z.infer<typeof FormSchema>) {
     console.log("values", values);
+    const tagsArray = values.tags ? values.tags.map(tag => tag.text) : [];
 
-    await createContainer({
+    mutate({
       name: values.name,
       description: values.description,
-      public: values.public
-    }).then(() => {
-      toast.success(`${values.name} created successfully.`)
-    }).catch((error) => {
-      toast.error(`Error: ${error.message}`)
-    });
-
-    form.reset();
-
-    setState("openContainerModal", false);
+      public: values.public,
+      tags: tagsArray
+    }, {
+      onSuccess: (data) => {
+        console.log("data", data)
+        toast.success(`${values.name} created successfully.`)
+      },
+      onError: (error) => {
+        toast.error(`Error: ${error.message}`)
+      },
+      onFinally: () => {
+        form.reset();
+        setState("openContainerModal", false);
+      }
+    })
   }
 
   const onClose = (open: boolean) => {
     setState("openContainerModal", open);
+    setTags([]);
     if (!open) {
       form.reset();
     }
@@ -79,15 +90,16 @@ const AddContainerDialog = () => {
   return (
     <Dialog open={state.openContainerModal} onOpenChange={onClose}>
       <DialogTrigger>
-        <Button>
+        <Button className="h-7 text-xs !bg-transparent dark:!text-zinc-200 !border dark:!border-zinc-800" disabled={isLoading}>
+          <Plus className="w-4 h-4 mr-2" />
           Add Container
         </Button>
       </DialogTrigger>
-      <DialogContent className={'p-10 !app-bg'}>
+      <DialogContent className={'p-10 md:!w-[800px] !app-bg'}>
         <Form {...form}>
           <form onSubmit={() => void form.handleSubmit(onSubmit)} >
             <div className={'flex flex-col justify-center items-center gap-4'}>
-              <Box className={'w-10 h-10 stroke-indigo-700'}/>
+              <Box className={'w-10 h-10 stroke-purple-800'}/>
               <div className={'flex flex-col justify-center items-center gap-1'}>
                 <span className={'text-3xl font-bold'}>
                   Create a new model container
@@ -145,6 +157,43 @@ const AddContainerDialog = () => {
                       </FormItem>
                     )}
                   />
+                </div>
+              </div>
+
+              <div className={'flex flex-row items-center justify-center w-4/5 gap-x-4'}>
+                <div className="grid w-full gap-1.5">
+                  <Label htmlFor="description" className={'text-zinc-200 font-thin'}>Tags</Label>
+                  <FormField
+                    control={form.control}
+                    name="tags"
+                    render={({ field }) => (
+                    <FormItem className="flex flex-col items-start">
+                      <FormControl>
+                        <TagInput
+                          {...field}
+                          activeTagIndex={null}
+                          setActiveTagIndex={() => {}}
+                          placeholder="Enter a tag"
+                          tags={tags}
+                          className="sm:min-w-[450px]"
+                          setTags={(newTags) => {
+                            setTags(newTags);
+                            field.onChange(newTags);
+                          }}
+                          styleClasses={{
+                            tag: {
+                              body: 'border border-purple-400 bg-purple-400/10',
+                            }
+                          }}
+                        />                      
+                      </FormControl>
+                      <span className={'text-zinc-200 font-thin text-xs italic'}>
+                        * Press enter to add a tag
+                      </span>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 </div>
               </div>
 
@@ -209,7 +258,14 @@ const AddContainerDialog = () => {
               </div>
 
               <div className={'w-4/5 flex items-end justify-end'}>
-                <Button>
+                <Button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSubmit(form.getValues());
+                  }}
+                  disabled={isLoading} 
+                  type="submit"
+                >
                   Create container
                 </Button>
               </div>

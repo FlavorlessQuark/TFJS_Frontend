@@ -33,15 +33,12 @@ const UserSelector = () => {
   ];
 
   return (
-    <div className='h-10 bg-zinc-900 hover:bg-zinc-800/50 border border-muted rounded-lg flex flex-row items-center justify-start'>
       <DropdownMenu>
         <DropdownMenuTrigger
           onClick={(e) => e.stopPropagation()} asChild
         >
-          <Button
-            className="border-none w-full justify-between items-center !bg-transparent text-gray-900 dark:text-white shadow-none">
-            <div className='flex flex-row items-center space-x-2'>
-              <Avatar className='h-4 w-4'>
+          <Button className="!bg-zinc-950 -mr-3">
+              <Avatar className='h-7 w-7 border border-zinc-600'>
                 {user?.name && (
                     <>
                         <AvatarImage
@@ -54,14 +51,10 @@ const UserSelector = () => {
                     </>
                 )}
               </Avatar>
-              <span className={'font-normal text-accent-foreground'}>
-                {user?.name}
-              </span>
-            </div>
           </Button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="bg-background w-80 mr-0 ml-4">
+        <DropdownMenuContent className="bg-background -mt-0.5 w-64">
           <DropdownMenuGroup>
             {menuItems.map((item, index) => (
               <div key={index}>
@@ -104,7 +97,6 @@ const UserSelector = () => {
         </DropdownMenuContent>
 
       </DropdownMenu>
-    </div>
   )
 }
 
