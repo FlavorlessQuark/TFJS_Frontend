@@ -18,8 +18,8 @@ export const Route: any = createRootRouteWithContext<{
             <Outlet />
 
             {/* Use this for Dev only */}
-            <ReactQueryDevtools buttonPosition="top-right" />
-            <TanStackRouterDevtools position="bottom-right" />
+            {/* <ReactQueryDevtools buttonPosition="top-right" />
+            <TanStackRouterDevtools position="bottom-right" /> */}
           </Layout>
         </TooltipProvider>
       </Authenticated>

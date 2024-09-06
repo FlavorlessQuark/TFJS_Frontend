@@ -20,6 +20,7 @@ import type * as helpers from "../helpers.js";
 import type * as http from "../http.js";
 import type * as layers from "../layers.js";
 import type * as model from "../model.js";
+import type * as tags from "../tags.js";
 import type * as tensorflow_data from "../tensorflow/data.js";
 import type * as tensorflow_tf_fn_mapping from "../tensorflow/tf_fn_mapping.js";
 import type * as tensorflow_tf_model from "../tensorflow/tf_model.js";
@@ -41,6 +42,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   layers: typeof layers;
   model: typeof model;
+  tags: typeof tags;
   "tensorflow/data": typeof tensorflow_data;
   "tensorflow/tf_fn_mapping": typeof tensorflow_tf_fn_mapping;
   "tensorflow/tf_model": typeof tensorflow_tf_model;

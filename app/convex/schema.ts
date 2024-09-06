@@ -13,7 +13,8 @@ export default defineSchema({
     tags: v.optional(v.array(v.string())),
     models: v.optional(v.array(v.id("model"))),
     dataset: v.optional(v.any()),
-    public: v.boolean(), // false by default
+    public: v.boolean(),
+    views: v.optional(v.number()),
     sharedWith: v.optional(v.array(v.id("users"))),
   })
     .index("by_creator", ["creator"])
@@ -44,5 +45,9 @@ export default defineSchema({
                 type: v.array(v.string()),
                 options: v.optional(v.array(v.string()))
         }))
-    })
+    }),
+    tags: defineTable({
+      name: v.string(),
+      creator: v.id("users"),
+    }),
 });

@@ -1,6 +1,7 @@
 import {internalQuery, mutation, query } from "./_generated/server";
 import {ConvexError, v} from "convex/values";
 import { user, allowed } from "./helpers";
+import { internal } from "./_generated/api";
 
 /**
  * Mutations for the container table
@@ -21,12 +22,29 @@ export const createContainer = mutation({
   async handler(ctx, args) {
     const userId = await user(ctx);
 
-
-    return await ctx.db.insert("container", {
+    const container = await ctx.db.insert("container", {
       ...args,
       sharedWith: [userId],
       creator: userId,
-    })
+    });
+
+    if (args.tags) {
+      const tagIds = [];
+      for (const tag of args.tags) {
+        const newTag = await ctx.db.insert("tags", {
+          name: tag,
+          creator: userId,
+        });
+        tagIds.push(newTag);
+      }
+      await ctx.db.patch(container, { tags: tagIds });
+    }
+
+    return {
+      message: "Container created",
+      status: 200,
+      container: container,
+    }
   }
 });
 
@@ -66,12 +84,25 @@ export const getMyContainers = query({
   async handler(ctx) {
     const userId = await user(ctx);
 
-    return await ctx.db
+    const containers = await ctx.db
       .query("container")
       .withIndex("by_creator", (q) =>
         q.eq("creator", userId)
       )
       .collect();
+
+      const containersWithCreator = await Promise.all(containers.map(async (container) => {
+        const creator = await ctx.db
+          .query("users")
+          .filter((q) => q.eq(q.field("_id"), container.creator))
+          .unique();
+        return {
+          ...container,
+          creator: creator,
+        };
+      }));
+
+      return containersWithCreator;
   }
 });
 
@@ -214,8 +245,6 @@ export const getContainerModels = query({
     }
 })
 
-
-
 /**
  * Delete a model from the container
  * @param containerId
@@ -293,5 +322,42 @@ export const toggleLikes = mutation({
       await ctx.db.patch(args.id, {
         likes
       });
+
+      return {
+        message: "Container liked",
+        status: 200,
+      }
   }}
+});
+
+/**
+ * Increment the views of a container
+ * @param id
+ */
+export const incrementViews = mutation({
+  args: {
+    id: v.id("container"),
+  },
+  async handler(ctx, args) {
+    const container = await ctx.db.get(args.id);
+    await ctx.db.patch(args.id, {views: (container?.views || 0) + 1});
+  }
+});
+
+
+/**
+ * Add tags to a container
+ * @param id
+ * @param tags
+ * @returns {Promise<void>}
+ */
+export const addTags = mutation({
+  args: {
+    id: v.id("container"),
+    tags: v.array(v.string()),
+  },
+  async handler(ctx, args) {
+    const container = await ctx.db.get(args.id);
+    await ctx.db.patch(args.id, {tags: [...(container?.tags || []), ...args.tags]});
+  }
 });
