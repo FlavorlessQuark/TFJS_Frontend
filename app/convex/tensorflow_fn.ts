@@ -36,6 +36,7 @@ export const run_model = action({
             },
             onBatchEnd: async (epoch, logs) => {
                 const info = (logs as tf.Logs)
+                console.log("info", info)
                 await ctx.runMutation(internal.model.updateModel_Logs, {logs: JSON.stringify(logs), id:args.id, batchNum:epoch})
             }
         }})

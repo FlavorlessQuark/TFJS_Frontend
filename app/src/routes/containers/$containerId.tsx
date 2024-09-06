@@ -10,7 +10,8 @@ import {api} from "../../../convex/_generated/api";
 import ModelDrawer from "@/components/container/mobile-drawer";
 import ModelContainer from "@/components/container/model-container";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Model } from '@/types';
 
 export const Route: any = createFileRoute('/containers/$containerId')({
   component: ContainerId,
@@ -30,6 +31,7 @@ function ContainerId() {
   const models = useQuery(api.container.getContainerModels, { id: containerId });
   const layerAttrs = useQuery(api.layers.getLayers);
   const incrementViews = useMutation(api.container.incrementViews);
+  const [model, _] = useState<Model | null>(null);
 
   useEffect(() => {
     if (container) {
@@ -56,7 +58,7 @@ function ContainerId() {
                 <h1 className="text-lg font-normal">{container.name}</h1>
               </div>
             </div>
-            <ModelDrawer container={container} />
+            <ModelDrawer layerAttrs={layerAttrs} model={model as any} container={container as any} />
             <div className={'flex justify-end items-center ml-auto'}>
             <Button size="icon" className={'text-xs gap-x-1 !bg-zinc-950 dark:!text-zinc-200'}>
             <div className="heart-container">

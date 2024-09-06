@@ -7,12 +7,16 @@ import { Button } from "../ui/button";
 import ModelLayer from "./model.layer";
 import { ModelContainerProps, SaveLayerFunction } from "../../types";
 
-const ModelContainer = ({ container, layerAttrs, model }: ModelContainerProps) => {
+const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 	const [selectedLayer, setSelectedLayer] = useState("")
 	const [openAccordions, setOpenAccordions] = useState<string[]>([]);
 	const [hoveredAccordion, setHoveredAccordion] = useState<number | null>(null);
 
 	const saveModel = useMutation(api.container.saveContainerModel)
+
+	if (!model) {
+		return null;
+	}
 
 	const addSelectedLayer = async (e: any) => {
 		e.preventDefault();

@@ -1,7 +1,6 @@
-import {Card, CardDescription, CardTitle} from "@/components/ui/card.tsx";
-import {Eye, Heart, ThumbsUp} from "lucide-react";
+import {Card, CardTitle} from "@/components/ui/card.tsx";
+import {Eye, Heart} from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { truncate } from "@/lib/utils";
 import { useToggleLike } from "@/hooks/container/use-toggle-like";
 import { toast } from "sonner";
 const ContainerCard = ({ container }: { container: any }) => {

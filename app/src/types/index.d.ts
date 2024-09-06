@@ -75,8 +75,8 @@ declare type SaveLayerFunction = (
 ) => Promise<void>;
 
 export interface ModelContainerProps {
-	layerAttrs: LayerAttrs;
-	model: Model;
+	layerAttrs?: LayerAttrs;
+	model?: Model;
 	container?: Container;
 	addToLayer?: (e: React.MouseEvent<HTMLButtonElement>, layerIdx: number, params: Parameter) => Promise<void>;
 }

@@ -21,7 +21,7 @@ type Options = {
 
 export const useToggleLike = () => {
   const [data, setData] = useState<ResponseType>(null)
-  const [error, setError] = useState<Error | null>(null)
+  const [error, _] = useState<Error | null>(null)
   const [status, setStatus] = useState<"loading" | "success" | "error" | "finally" | null>(null)
   
   const isLoading = useMemo(() => status === "loading", [status])
