@@ -1,12 +1,13 @@
 import {createFileRoute} from '@tanstack/react-router'
-import {useAction, useMutation, useQuery} from "convex/react";
+import {useMutation, useQuery} from "convex/react";
 import {api} from "../../../convex/_generated/api";
 import ModelContainer from "@/components/container/model-container";
 import { useEffect, useState } from 'react';
 import { Container, Model } from '@/types';
-import AddModelDialog from '@/components/AddModelDialog';
 import ModelHeader from '@/components/layout/model-header';
-import { Button } from "@/components/ui/button"
+import {useDropzone} from 'react-dropzone';
+import AddModelDialog from '@/components/AddModelDialog';
+import { useGlobalState } from '@/providers/StateProvider';
 
 export const Route: any = createFileRoute('/containers/$containerId')({
   component: ContainerId,
@@ -24,6 +25,8 @@ function ContainerId() {
   const layerAttrs = useQuery(api.layers.getLayers);
   const incrementViews = useMutation(api.container.incrementViews);
   const [model, _] = useState<Model | null>(null);
+  const {acceptedFiles, getRootProps, getInputProps, isDragActive} = useDropzone({ noClick: true });
+  const { setState } = useGlobalState();
 
   useEffect(() => {
     if (container) {
@@ -31,13 +34,27 @@ function ContainerId() {
     }
   }, [container?._id]);
 
+  useEffect(() => {
+    if (acceptedFiles.length > 0) {
+      setState("openModelModal", true);
+    }
+  }, [acceptedFiles]);
+
   if (!container) {
     return null;
   }
 
+  const files = acceptedFiles.map(file => (
+    <li key={file.name}>
+      {file.name} - {file.size} bytes
+    </li>
+  ));
+
   return (
     <>
     <ModelHeader container={container as Container} model={model as Model} layerAttrs={layerAttrs} />
+    <section className="container w-screen">
+    <div {...getRootProps({className: `w-screen h-[calc(100vh-95px)] p-2 dropzone ${isDragActive ? 'bg-background/50 border border-purple-400 border-dashed' : ''}`})}>
     <main className="grid w-full">
         <div className="flex flex-col">
           <main className="grid flex-1 gap-4 overflow-auto p-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -60,6 +77,9 @@ function ContainerId() {
           </main>
         </div>
     </main>
+    </div>
+    </section>
+    <AddModelDialog container={container as Container} acceptedFiles={acceptedFiles} />
     </>
   );
 }

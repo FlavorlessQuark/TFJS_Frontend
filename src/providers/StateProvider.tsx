@@ -4,6 +4,7 @@ type State = {
   openContainerModal: boolean;
   openModelModal: boolean;
   openModelLayer: boolean;
+  openRunModal: boolean;
   openFilter: boolean;
 };
 
@@ -20,6 +21,7 @@ export const StateProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     openModelModal: false,
     openModelLayer: false,
     openFilter: false,
+    openRunModal: false,
   });
 
   const setState = (key: keyof State, value: any) => {

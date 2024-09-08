@@ -20,11 +20,16 @@ import {
 import { TrashIcon } from "lucide-react";
 import { useDeleteModel } from "@/hooks/model/use-delete-model";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import RunModal from "../RunModal";
 
 const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 	const testRun = useAction(api.tensorflow_fn.run_model)
 	const [selectedLayer, setSelectedLayer] = useState("")
 	const [openAccordions, setOpenAccordions] = useState<string[]>([]);
+	const [hoveredParam, setHoveredParam] = useState<number | null>(null);
+	const [selectedParam, setSelectedParam] = useState<string | null>(null);
+	const [selectedParamValue, setSelectedParamValue] = useState<any>(null);
 	const [hoveredAccordion, setHoveredAccordion] = useState<number | null>(null);
 
 	const saveModel = useMutation(api.container.saveContainerModel)
@@ -42,14 +47,12 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 
 			model.layers.push({ name: selectedLayer, parameters: [] })
 
-			console.log("updating model", model)
-
+			setOpenAccordions(prev => [...prev, String(model.layers.length - 1)])
 			await saveModel({ id: model._id, layers: model.layers })
 		}
 	}
 
 	const saveLayer: SaveLayerFunction = async (e, layerIdx, params) => {
-		console.log("saving layer", e, layerIdx, params)
 		e.preventDefault()
 		model.layers[layerIdx].parameters.push(params)
 		await saveModel({ id: model._id, layers: model.layers })
@@ -88,7 +91,8 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 									{hoveredAccordion === i && (
 										<AlertDialog>
 										<AlertDialogTrigger asChild>
-										<Button 
+										<Button
+											onClick={(e) => e.stopPropagation()}
 											variant="outline" 
 											className="ml-2 !h-4 !border-none !px-1 !bg-white !text-zinc-950 !hover:!bg-white/40 !text-xs !font-thin card-title"
 										>
@@ -117,15 +121,61 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 									</div>
 								</AccordionTrigger>
 								<AccordionContent>
-									{layer.parameters.map((e) => (
-										<div key={e.name}> {e.name} : {e.value}</div>
+									<div className={cn(layer.parameters.length > 0 && "mb-4")}>
+									{layer.parameters.length > 0 && (
+										<div className="uppercase text-[10px] text-zinc-500">
+											Current Parameters
+										</div>
+									)}
+									{layer.parameters.map((e, paramIdx) => (
+										<div 
+											className="card-title text-xs flex items-center" 
+											key={e.name}
+											onMouseEnter={() => setHoveredParam(paramIdx)}
+											onMouseLeave={() => setHoveredParam(null)}
+										>
+											{e.name}: <span className="ml-2 text-zinc-500 card-title bg-zinc-950 rounded-md px-1">{e.value}</span>
+											{hoveredParam === paramIdx && (
+												<AlertDialog>
+													<AlertDialogTrigger asChild>
+														<Button 
+															variant="outline" 
+															className="ml-2 !h-4 !border-none !px-1 !bg-white !text-zinc-950 !hover:!bg-white/40 !text-xs !font-thin card-title"
+														>
+															Edit
+														</Button>
+													</AlertDialogTrigger>
+													<AlertDialogContent>
+														<AlertDialogHeader>
+															<AlertDialogTitle>Edit Parameter</AlertDialogTitle>
+															<AlertDialogDescription>
+																This will allow you to edit the parameter and remove the current value.
+															</AlertDialogDescription>
+														</AlertDialogHeader>
+														<AlertDialogFooter>
+															<AlertDialogCancel>Cancel</AlertDialogCancel>
+															<AlertDialogAction onClick={(e) => {
+																e.stopPropagation();
+																const newLayers = [...model.layers];
+																const paramToEdit = newLayers[i].parameters.splice(paramIdx, 1)[0];
+																saveModel({ id: model._id, layers: newLayers });
+																setSelectedLayer(layer.name);
+																setSelectedParam(paramToEdit.name);
+																setSelectedParamValue(paramToEdit.value);
+															}}>Edit Parameter</AlertDialogAction>
+														</AlertDialogFooter>
+													</AlertDialogContent>
+												</AlertDialog>
+											)}
+										</div>
 									))}
+									</div>
 									{layerAttrs && layerAttrs[layer.name] && (
 										<ModelLayer
 											layer={layer}
 											layerIdx={i}
 											params={layerAttrs[layer.name] as any}
-											addToLayer={({ e, layerIdx, params }: any) => saveLayer(e, layerIdx, params)}
+											addToLayer={saveLayer}
 										/>
 									)}
 								</AccordionContent>
@@ -149,9 +199,7 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 						<Button className="mt-1 w-full !bg-zinc-100 hover:!bg-zinc-300 hover:!text-zinc-950" onClick={(e) => addSelectedLayer(e)}> Add</Button>
 						{/* <Button onClick={async () => await testRun({id:elem?._id})}> Run Model (test button)</Button> */}
 						<div className="flex flex-row items-center mt-4 justify-between">
-						<span className="text-xs text-muted-foreground card-title hover:!text-zinc-100 cursor-pointer hover:underline" onClick={async () => await testRun({ id: model?._id })}>
-							Run Model (test button)
-						</span>
+						<RunModal model={model} />
 
 						<Button 
 							variant="outline" 

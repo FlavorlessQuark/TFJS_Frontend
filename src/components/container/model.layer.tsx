@@ -23,7 +23,7 @@ interface ModelLayerProps {
   layer?: Layer;
   layerIdx: number;
   params: LayerParams;
-  addToLayer: (e: React.MouseEvent, layerIdx: number, params: { name: string; value: any }) => Promise<void>;
+  addToLayer: any;
 }
 
 const ModelLayer = ({ layerIdx, params, addToLayer }: ModelLayerProps) => {
@@ -49,6 +49,7 @@ const ModelLayer = ({ layerIdx, params, addToLayer }: ModelLayerProps) => {
                     )}
                 </SelectContent>
             </Select>
+            
             {selectedParam && params &&
                 <Select onValueChange={(e) => {setSelectedType(e); setSelectedParamValue("")}}>
                     <SelectTrigger id="model" className={cn("items-start [&_[data-description]]:hidden", selectedType && "mb-1")}>

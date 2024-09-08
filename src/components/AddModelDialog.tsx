@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/dialog";
 import { useGlobalState } from "@/providers/StateProvider";
 import {Button} from "@/components/ui/button.tsx";
-import {Box, Plus} from "lucide-react";
+import {Box, Combine, Plus} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {useQuery} from "convex/react";
@@ -24,6 +24,7 @@ import { toast } from "sonner"
 import {Separator} from "@/components/ui/separator.tsx";
 import { useCreateModel } from "@/hooks/model/use-create-model";
 import { Container } from "@/types";
+import { formatBytes } from "@/lib/utils";
 
 const FormSchema = z.object({
   name: z.string().min(2, {
@@ -32,16 +33,18 @@ const FormSchema = z.object({
   containerId: z.string().optional(),
 })
 
-const AddModelDialog = ({ container }: { container: Container }) => {
+const AddModelDialog = ({ container, acceptedFiles }: { container: Container, acceptedFiles?: File[] }) => {
   const { state, setState } = useGlobalState();
   const user = useQuery(api.users.viewer);
   const { mutate, isLoading } = useCreateModel();
+
+  console.log("acceptedFiles", acceptedFiles)
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
-      containerId: container._id
+        containerId: container?._id
     },
   })
 
@@ -76,19 +79,21 @@ const AddModelDialog = ({ container }: { container: Container }) => {
   return (
     <Dialog open={state.openModelModal} onOpenChange={onClose}>
       <DialogTrigger onClick={() => setState("openModelLayer", true)}>
-        <Button className="h-7 text-xs !bg-transparent dark:!text-zinc-200 !border dark:!border-zinc-800 gap-1.5 hover:!bg-zinc-900" disabled={isLoading}>
-          <Plus className="size-3.5" />
-          Add Model
-        </Button>
+        {!acceptedFiles && (
+          <Button className="h-7 text-xs !bg-transparent dark:!text-zinc-200 !border dark:!border-zinc-800 gap-1.5 hover:!bg-zinc-900" disabled={isLoading}>
+            <Plus className="size-3.5" />
+            Add Model
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className={'p-10 md:!w-[800px] !app-bg'}>
         <Form {...form}>
           <form onSubmit={() => void form.handleSubmit(onSubmit)} >
             <div className={'flex flex-col justify-center items-center gap-4'}>
-              <Box className={'w-10 h-10 stroke-purple-800'}/>
+              <Combine className={'w-10 h-10 stroke-purple-800'}/>
               <div className={'flex flex-col justify-center items-center gap-1'}>
                 <span className={'text-3xl font-bold'}>
-                  Create a new model
+                  Add a new model
                 </span>
                 <span className={'text-lg font-thin text-zinc-600'}>
                   A model is a collection of layers and can be used to train a model.
@@ -125,16 +130,23 @@ const AddModelDialog = ({ container }: { container: Container }) => {
 
               <Separator className={'my-4 w-4/5'}/>
 
-              <div className={'my-4 w-4/5 p-4 border border-muted bg-accent/50 rounded-xl text-sm flex items-center justify-center text-zinc-200'}>
-                Once your Model is created, you can upload your files using the web interface.
-              </div>
+              {acceptedFiles && acceptedFiles.length > 0 && (
+                <div className={'flex flex-col w-4/5 gap-1'}>
+                  <Label className={'text-zinc-500 uppercase text-[10px] u'}>Dataset</Label>
+                    {acceptedFiles.map((file, index) => (
+                      <span key={index} className={'text-zinc-200 text-sm'}>
+                        {file.name} - <span className={'bg-zinc-950 text-zinc-500 px-1 rounded-sm text-xs'}>{formatBytes(file.size)}</span>
+                      </span>
+                    ))}
+                </div>
+              )}
 
               <div className={'w-4/5 flex items-end justify-end'}>
                 <Button onClick={(e) => {
                 e.preventDefault()
 
                 mutate({
-                  id: container._id, 
+                  id: container?._id, 
                   name: form.getValues("name")
                   }, {
                     onSuccess: (data) => {
