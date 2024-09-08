@@ -93,13 +93,75 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({
-  IndexLazyRoute,
-  TestingRoute,
-  ContainersContainerIdRoute,
-  CommunityIndexRoute,
-  ContainersIndexRoute,
-})
+export interface FileRoutesByFullPath {
+  '/': typeof IndexLazyRoute
+  '/testing': typeof TestingRoute
+  '/containers/$containerId': typeof ContainersContainerIdRoute
+  '/community': typeof CommunityIndexRoute
+  '/containers': typeof ContainersIndexRoute
+}
+
+export interface FileRoutesByTo {
+  '/': typeof IndexLazyRoute
+  '/testing': typeof TestingRoute
+  '/containers/$containerId': typeof ContainersContainerIdRoute
+  '/community': typeof CommunityIndexRoute
+  '/containers': typeof ContainersIndexRoute
+}
+
+export interface FileRoutesById {
+  __root__: typeof rootRoute
+  '/': typeof IndexLazyRoute
+  '/testing': typeof TestingRoute
+  '/containers/$containerId': typeof ContainersContainerIdRoute
+  '/community/': typeof CommunityIndexRoute
+  '/containers/': typeof ContainersIndexRoute
+}
+
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/testing'
+    | '/containers/$containerId'
+    | '/community'
+    | '/containers'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/testing'
+    | '/containers/$containerId'
+    | '/community'
+    | '/containers'
+  id:
+    | '__root__'
+    | '/'
+    | '/testing'
+    | '/containers/$containerId'
+    | '/community/'
+    | '/containers/'
+  fileRoutesById: FileRoutesById
+}
+
+export interface RootRouteChildren {
+  IndexLazyRoute: typeof IndexLazyRoute
+  TestingRoute: typeof TestingRoute
+  ContainersContainerIdRoute: typeof ContainersContainerIdRoute
+  CommunityIndexRoute: typeof CommunityIndexRoute
+  ContainersIndexRoute: typeof ContainersIndexRoute
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexLazyRoute: IndexLazyRoute,
+  TestingRoute: TestingRoute,
+  ContainersContainerIdRoute: ContainersContainerIdRoute,
+  CommunityIndexRoute: CommunityIndexRoute,
+  ContainersIndexRoute: ContainersIndexRoute,
+}
+
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* prettier-ignore-end */
 
