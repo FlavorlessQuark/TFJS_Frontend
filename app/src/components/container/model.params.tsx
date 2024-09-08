@@ -1,4 +1,5 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "../ui/input";
 
 interface ModelParamValueProps {
     selectedType: string;
@@ -12,7 +13,7 @@ const ModelParamValue = ({selectedType, setSelectedParamValue, options}: ModelPa
         <>
             { selectedType == "number" &&
                     <div>
-                        <input onChange={(e) => setSelectedParamValue(parseInt(e.target.value))} type="number"></input>
+                        <Input onChange={(e) => setSelectedParamValue(parseInt(e.target.value))} type="number" />
                     </div>
             }
             { selectedType == "string" &&

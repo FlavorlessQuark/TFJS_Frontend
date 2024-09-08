@@ -33,6 +33,7 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 	}
 
 	const saveLayer: SaveLayerFunction = async (e, layerIdx, params) => {
+		console.log("saving layer", e, layerIdx, params)
 		e.preventDefault()
 		model.layers[layerIdx].parameters.push(params)
 		await saveModel({ id: model._id, layers: model.layers })

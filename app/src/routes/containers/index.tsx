@@ -121,7 +121,7 @@ function Index() {
         </div>
       </div>
       {/* Right side */}
-      <div className="w-full lg:w-1/3 lg:sticky lg:top-6">
+      <div className="w-full lg:w-1/3 lg:sticky lg:top-6 bg-[#121212]">
         <div className="border border-purple-400 rounded-lg p-4">
           <div className="flex justify-between items-center border-b border-zinc-800 pb-2 mb-4">
             <h5 className="text-sm font-medium">Filter</h5>
