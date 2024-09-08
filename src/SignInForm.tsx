@@ -13,7 +13,7 @@ export function SignInForm() {
 
   return (
     <div className="">
-      <div className="w-[450px] mx-auto flex flex-col my-auto gap-4">
+      <div className="w-[350px] md:w-[450px] mx-auto flex flex-col my-auto gap-4 p-4">
         {step === "signIn" ? (
           <div>
             <div className="flex flex-col gap-2">
