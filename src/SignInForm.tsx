@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
+import { GoogleLogo } from "./components/GoogleLogo";
 
 export function SignInForm() {
   const [step, setStep] = useState<"signIn" | "linkSent">("signIn");
@@ -14,14 +15,14 @@ export function SignInForm() {
     <div className="">
       <div className="w-[450px] mx-auto flex flex-col my-auto gap-4">
         {step === "signIn" ? (
-          <>
-            <h2 className="font-normal text-2xl tracking-tight">
-              Sign in or create an account
-            </h2>
+          <div>
+            <div className="flex flex-col gap-2">
             <SignInWithGitHub />
-            <SignInMethodDivider />
-            <SignInWithMagicLink handleLinkSent={() => setStep("linkSent")} />
-          </>
+            <SignInWithGoogle />
+            </div>
+            {/* <SignInMethodDivider />
+            <SignInWithMagicLink handleLinkSent={() => setStep("linkSent")} /> */}
+          </div>
         ) : (
           <>
             <h2 className="font-semibold text-2xl tracking-tight">
@@ -52,6 +53,20 @@ export function SignInWithGitHub() {
       onClick={() => void signIn("github")}
     >
       <GitHubLogoIcon className="mr-2 h-4 w-4" /> GitHub
+    </Button>
+  );
+}
+
+export function SignInWithGoogle() {
+  const { signIn } = useAuthActions();
+  return (
+    <Button
+      className="flex-1"
+      variant="outline"
+      type="button"
+      onClick={() => void signIn("google")}
+    >
+      <GoogleLogo className="mr-2 h-4 w-4" /> Google
     </Button>
   );
 }
