@@ -2,37 +2,106 @@
 // const fs = require('fs')
 
 import tf from "@tensorflow/tfjs"
+import { Doc } from "../_generated/dataModel"
 
-type data = {x: Array<number>, y: Array<number>}
-type t_data = {x: tf.Tensor, y: tf.Tensor}
+interface I_datasetFormat {
+    x: Array<any> | tf.Tensor,
+    y: Array<any> | tf.Tensor,
+}
+
+interface I_Dataset {
+    data: {x: Array<any>, y:Array<any>}[],
+    xshape: Array<number>,
+    yshape: Array<number>,
+}
+
+/*
+    csv format :
+
+ */
+export const dataParseFrom_Csv = (data: any) => {
+    let set : I_Dataset = {
+        data: [{x:[], y:[]}],
+        xshape:[0],
+        yshape:[0]
+    };
+
+
+    return set
+}
+
+export const dataParseFrom_Json = (data:any) => {
+    let set : I_Dataset = {
+        data: [{x:[], y:[]}],
+        xshape:[0],
+        yshape:[0]
+    };
+
+
+    return set
+}
+
+
+
+export const dataMakeTensors = (data : Doc<"dataref">, trainCount:number, testCount:number) => {
+    const train:I_datasetFormat = {x:[], y:[]}
+    const validate:I_datasetFormat = {x:[], y:[]}
+    const test:I_datasetFormat = {x:[], y:[]};
+
+    for (let i = 0; i < trainCount; i += 1) {
+        train.x = train.x.concat(data.data[i].x)
+        train.y = train.y.concat(data.data[i].y)
+
+        validate.x = validate.x.concat(data.data[i + trainCount].x)
+        validate.y = validate.y.concat(data.data[i + trainCount].y)
+    }
+
+
+    for (let i = 0; i < testCount; i += 1) {
+        test.x = test.x.concat(data.data[i + (trainCount * 2)].x)
+        test.y = test.y.concat(data.data[i + (trainCount * 2)].y)
+    }
+
+    train.x = tf.tensor(train.x as Array<any>, [trainCount].concat(data.xshape))
+    train.y = tf.tensor(train.y as Array<any>, [trainCount].concat(data.yshape))
+
+    validate.x = tf.tensor(validate.x as Array<any>, [trainCount].concat(data.xshape))
+    validate.y = tf.tensor(validate.y as Array<any>, [trainCount].concat(data.yshape))
+
+    test.x = tf.tensor(test.x as Array<any>, [testCount].concat(data.xshape))
+    test.y = tf.tensor(test.y as Array<any>, [testCount].concat(data.yshape))
+
+    return [train, validate, test];
+}
+
 
 export const make_dummy_data = () => {
     const TRAIN_LEN = 100
     const TEST_LEN = 50
 
 
-    let train: data| t_data = {x:[], y : []};
-    let validation : data | t_data = {x:[], y : []};
-    let test : data | t_data = {x:[], y : []};
+    // let train: data| t_data = {x:[], y : []};
+    // let validation : data | t_data = {x:[], y : []};
+    // let test : data | t_data = {x:[], y : []};
 
-    for (let i = 0; i < TRAIN_LEN; i++) {
-        train.x.push(i)
-        train.y.push(i * 2)
+    // for (let i = 0; i < TRAIN_LEN; i++) {
+    //     train.x.push(i)
+    //     train.y.push(i * 2)
 
-        validation.x.push(i + TRAIN_LEN)
-        validation.y.push((i + TRAIN_LEN) * 2)
-    }
+    //     validation.x.push(i + TRAIN_LEN)
+    //     validation.y.push((i + TRAIN_LEN) * 2)
+    // }
 
-    for (let i = 0; i < TEST_LEN; i++) {
-        test.x.push(i)
-        test.y.push(i * 2)
-    }
+    // for (let i = 0; i < TEST_LEN; i++) {
+    //     test.x.push(i)
+    //     test.y.push(i * 2)
+    // }
 
-    train = {x : tf.tensor(train.x, [TRAIN_LEN, 1]), y: tf.tensor(train.y, [TRAIN_LEN, 1])}
-    validation = {x : tf.tensor(validation.x, [TRAIN_LEN, 1]), y: tf.tensor(validation.y, [TRAIN_LEN, 1])}
-    test = {x : tf.tensor(test.x, [TEST_LEN, 1]), y: tf.tensor(test.y, [TEST_LEN, 1])}
+    // train = {x : tf.tensor(train.x, [TRAIN_LEN, 1]), y: tf.tensor(train.y, [TRAIN_LEN, 1])}
+    // validation = {x : tf.tensor(validation.x, [TRAIN_LEN, 1]), y: tf.tensor(validation.y, [TRAIN_LEN, 1])}
+    // test = {x : tf.tensor(test.x, [TEST_LEN, 1]), y: tf.tensor(test.y, [TEST_LEN, 1])}
 
-    return {train,  validation, test}
+    // return {train,  validation, test}
 }
 
 // class model_data {
@@ -76,8 +145,6 @@ export const make_dummy_data = () => {
 //         let filenames = []
 //         let train_data = []
 //         let test_data = []
-
-
 
 //         fs.readdirSync("./data/training").forEach(file => filenames.push(file))
 

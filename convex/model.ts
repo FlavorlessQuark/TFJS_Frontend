@@ -1,6 +1,6 @@
-import {internalMutation, internalQuery, mutation, query } from "./_generated/server";
-import {ConvexError, v} from "convex/values";
-import { user, allowed } from "./helpers";
+import { v } from "convex/values";
+import { internalMutation, internalQuery } from "./_generated/server";
+
 
 
 /**
@@ -20,7 +20,7 @@ export const getModel = internalQuery({
 export const updateModel_Logs = internalMutation({
     args: {
         id: v.id('model'),
-        logs: v.string(),
+        logs: v.any(),
         batchNum: v.number(),
     },
     handler: async (ctx, args) => {
@@ -41,6 +41,7 @@ export const updateModel_Logs = internalMutation({
     }
 })
 
+<<<<<<< HEAD:convex/model.ts
 export const deleteModel = mutation({
     args: {
         id: v.id('model'),
@@ -55,3 +56,9 @@ export const deleteModel = mutation({
         }
     }
 })
+=======
+
+
+
+
+>>>>>>> c164a9f (backend for filr upload and refactor model/ data):app/convex/model.ts
