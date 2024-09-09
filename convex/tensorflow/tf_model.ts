@@ -1,13 +1,10 @@
 "use node"
 
-<<<<<<< HEAD:convex/tensorflow/tf_model.ts
-=======
 
 import { v } from "convex/values";
 import { internal } from "../_generated/api";
 import { action } from "../_generated/server";
 import { dataMakeTensors, make_dummy_data } from "./data";
->>>>>>> c164a9f (backend for filr upload and refactor model/ data):app/convex/tensorflow/tf_model.ts
 import { mappings } from "./tf_fn_mapping";
 import tf, { layers } from "@tensorflow/tfjs";
 
