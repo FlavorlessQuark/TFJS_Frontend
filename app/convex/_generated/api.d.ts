@@ -16,6 +16,7 @@ import type {
 } from "convex/server";
 import type * as auth from "../auth.js";
 import type * as container from "../container.js";
+import type * as data from "../data.js";
 import type * as helpers from "../helpers.js";
 import type * as http from "../http.js";
 import type * as layers from "../layers.js";
@@ -24,7 +25,6 @@ import type * as tags from "../tags.js";
 import type * as tensorflow_data from "../tensorflow/data.js";
 import type * as tensorflow_tf_fn_mapping from "../tensorflow/tf_fn_mapping.js";
 import type * as tensorflow_tf_model from "../tensorflow/tf_model.js";
-import type * as tensorflow_fn from "../tensorflow_fn.js";
 import type * as users from "../users.js";
 
 /**
@@ -38,6 +38,7 @@ import type * as users from "../users.js";
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   container: typeof container;
+  data: typeof data;
   helpers: typeof helpers;
   http: typeof http;
   layers: typeof layers;
@@ -46,7 +47,6 @@ declare const fullApi: ApiFromModules<{
   "tensorflow/data": typeof tensorflow_data;
   "tensorflow/tf_fn_mapping": typeof tensorflow_tf_fn_mapping;
   "tensorflow/tf_model": typeof tensorflow_tf_model;
-  tensorflow_fn: typeof tensorflow_fn;
   users: typeof users;
 }>;
 export declare const api: FilterApi<

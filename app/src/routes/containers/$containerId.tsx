@@ -90,9 +90,9 @@ function ContainerId() {
                   <ModelContainer layerAttrs={layerAttrs} model={elem} container={container as any} />
                   <Button onClick={async () => await testRun({id:elem?._id})}> Run Model (test button)</Button>
                   <div>
-                    {elem.logs?.logs.map((log, i) => (
+                    {elem.logs & elem.logs.map((log, i) => (
                       <div key={i}>
-                        Batch {i} : {log}
+                        Batch {i}
                       </div>
                     ))}
                   </div>
