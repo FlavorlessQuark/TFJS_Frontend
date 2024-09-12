@@ -3,6 +3,7 @@
 
 import tf from "@tensorflow/tfjs"
 import { Doc } from "../_generated/dataModel"
+import { number } from "prop-types";
 
 interface I_datasetFormat {
     x: Array<any> | tf.Tensor,
@@ -10,7 +11,7 @@ interface I_datasetFormat {
 }
 
 interface I_Dataset {
-    data: {x: Array<any>, y:Array<any>}[],
+    data: {x: Array<Array<any>>, y:Array<Array<any>>},
     xshape: Array<number>,
     yshape: Array<number>,
 }
@@ -21,7 +22,7 @@ interface I_Dataset {
  */
 export const dataParseFrom_Csv = (data: any) => {
     let set : I_Dataset = {
-        data: [{x:[], y:[]}],
+        data: {x:[], y:[]},
         xshape:[0],
         yshape:[0]
     };
@@ -32,11 +33,78 @@ export const dataParseFrom_Csv = (data: any) => {
 
 export const dataParseFrom_Json = (data:any) => {
     let set : I_Dataset = {
-        data: [{x:[], y:[]}],
+        data: {x:[], y:[]},
         xshape:[0],
         yshape:[0]
     };
 
+    /*
+        Json should already be the correct format, (I_Dataset)
+        but we need to check that all the fields are correct and  consistent:
+         - all "x" entries are the same length and type
+         - all "y" entries are the same length and type
+         - "x", "y" entries are a valid type (num, str, [])
+         - x, y can be formed into xshape,yshape
+     */
+
+    if(!data.yshape)
+        throw "Not YShape field detected"
+    if(!data.xshape)
+        throw "Not XShape field detected"
+
+    set.xshape = data.xshape
+    set.yshape = data.yshape
+
+    if(!data.x)
+        throw "Not x field detected"
+    if(!data.y)
+        throw "Not y field detected"
+
+    if (typeof data.x !== typeof [])
+        throw "X field is not array"
+    if (typeof data.y !== typeof [])
+        throw "Y field is not array"
+    if (data.y.length !== data.x,length)
+        throw "Xand Y field length mismatch"
+    if (data.x.length == 0 || typeof data.x[0] !== typeof [])
+        throw "Element in X are not arrays"
+    if (data.x[0].length == 0)
+        throw "Element in X is empty"
+    if (data.y.length == 0 || typeof data.y[0] !== typeof [])
+        throw "Element in y are not arrays"
+    if (data.y[0].length == 0)
+        throw "Element in y is empty"
+
+    for (let elem of data.x) {
+        if (elem.length !== data.x[0].length)
+            throw "X data length mismatch"
+        for (let value of elem) {
+            if (typeof value !== typeof data.x[0][0])
+                throw "X data type mismatch"
+        }
+    }
+
+
+
+    for (let elem of data.y) {
+        if (elem.length !== data.y[0].length)
+            throw "y data length mismatch"
+        for (let value of elem) {
+            if (typeof value !== typeof data.y[0][0])
+                throw "y data type mismatch"
+        }
+    }
+
+    const ycount = data.y[0][0].length
+    const xcount = data.x[0][0].length
+
+    if (xcount !== set.yshape.reduce((total, curr) => total + curr, 0))
+        throw "Invalid yShape for y data"
+    if (ycount !== set.yshape.reduce((total, curr) => total + curr, 0))
+        throw "Invalid yShape for y data"
+
+    set.data.x = data.x
+    set.data.y = data.y
 
     return set
 }
@@ -49,17 +117,17 @@ export const dataMakeTensors = (data : Doc<"dataref">, trainCount:number, testCo
     const test:I_datasetFormat = {x:[], y:[]};
 
     for (let i = 0; i < trainCount; i += 1) {
-        train.x = train.x.concat(data.data[i].x)
-        train.y = train.y.concat(data.data[i].y)
+        train.x = train.x.concat(data.data.x[i])
+        train.y = train.y.concat(data.data.y[i])
 
-        validate.x = validate.x.concat(data.data[i + trainCount].x)
-        validate.y = validate.y.concat(data.data[i + trainCount].y)
+        validate.x = validate.x.concat(data.data.x[i + trainCount])
+        validate.y = validate.y.concat(data.data.y[i + trainCount])
     }
 
 
     for (let i = 0; i < testCount; i += 1) {
-        test.x = test.x.concat(data.data[i + (trainCount * 2)].x)
-        test.y = test.y.concat(data.data[i + (trainCount * 2)].y)
+        test.x = test.x.concat(data.data.x[i + (trainCount * 2)])
+        test.y = test.y.concat(data.data.y[i + (trainCount * 2)])
     }
 
     train.x = tf.tensor(train.x as Array<any>, [trainCount].concat(data.xshape))

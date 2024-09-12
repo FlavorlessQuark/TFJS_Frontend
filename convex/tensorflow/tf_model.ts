@@ -49,8 +49,8 @@ export const run_model = action({
     // const data = make_dummy_data();
     const BATCHSIZE = 5;
     const EPOCHS = 10
-    const TRAIN_COUNT = Math.floor(dataset.data.length * 0.37)
-    const TEST_COUNT = Math.floor(dataset.data.length * 0.25)
+    const TRAIN_COUNT = Math.floor(dataset.data.x.length * 0.37)
+    const TEST_COUNT = Math.floor(dataset.data.x.length * 0.25)
 
 
     const [train, validation, test] = dataMakeTensors(dataset, TRAIN_COUNT, TEST_COUNT);

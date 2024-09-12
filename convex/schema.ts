@@ -53,10 +53,10 @@ export default defineSchema({
         dataref: v.id("dataref")
     }),
     dataref:defineTable({
-        data: v.array(v.object({
-            x:v.array(v.any()),
-            y:v.array(v.any()),
-        })),
+        data: v.object({
+            x:v.array(v.array(v.any())),
+            y:v.array(v.array(v.any())),
+        }),
         xshape:v.array(v.number()),
         yshape:v.array(v.number())
     })
