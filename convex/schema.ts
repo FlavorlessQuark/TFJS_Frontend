@@ -12,7 +12,7 @@ export default defineSchema({
     likes: v.optional(v.array(v.id("users"))),
     tags: v.optional(v.array(v.string())),
     models: v.optional(v.array(v.id("model"))),
-    dataset: v.optional(v.any()),
+    dataset: v.optional(v.id("dataset")),
     public: v.boolean(),
     views: v.optional(v.number()),
     sharedWith: v.optional(v.array(v.id("users"))),
@@ -29,12 +29,7 @@ export default defineSchema({
             }))
         }
       )),
-      logs : v.optional(v.object(
-        {
-            logs: v.array(v.string()),
-            final: v.optional(v.number())
-            }
-      ))
+      logs : v.optional(v.any())
     }),
     layerTypes : defineTable({
         name: v.string(),
@@ -50,4 +45,19 @@ export default defineSchema({
       name: v.string(),
       creator: v.id("users"),
     }),
+    dataset:defineTable({
+        name: v.string(),
+        creator: v.id('users'),
+        description: v.optional(v.string()),
+        tags:v.optional(v.array(v.string())),
+        dataref: v.id("dataref")
+    }),
+    dataref:defineTable({
+        data: v.object({
+            x:v.array(v.array(v.any())),
+            y:v.array(v.array(v.any())),
+        }),
+        xshape:v.array(v.number()),
+        yshape:v.array(v.number())
+    })
 });
