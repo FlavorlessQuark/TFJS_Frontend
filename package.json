@@ -48,6 +48,7 @@
     "@tanstack/react-query-devtools": "^5.52.1",
     "@tanstack/react-router": "^1.48.1",
     "@tensorflow/tfjs": "^4.20.0",
+    "@xixixao/uploadstuff": "^0.0.5",
     "axios": "^1.7.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { internalQuery, mutation } from "./_generated/server";
 import { dataParseFrom_Csv, dataParseFrom_Json } from "./tensorflow/data";
 import { user } from "./helpers";
@@ -49,5 +49,14 @@ export const saveDataset = mutation({
     }
 })
 
+export const generateUploadUrl = mutation(async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+  
+    if (!identity) {
+      throw new ConvexError("you must be logged in to upload a file");
+    }
+  
+    return await ctx.storage.generateUploadUrl();
+  });
 
 

@@ -63,7 +63,7 @@ function ContainerId() {
                 elem && <div key={elem.name + i} className="w-full">
                   <ModelContainer layerAttrs={layerAttrs} model={elem} container={container as any} />
                   <div className="overflow-y-auto">
-                    {elem.logs?.logs.map((log, i) => (
+                    {elem.logs?.logs.map((log: any, i: any) => (
                       <div key={i}>
                         Batch {i} : {log}
                       </div>

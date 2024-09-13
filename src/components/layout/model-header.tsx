@@ -5,11 +5,16 @@ import { Button } from "@/components/ui/button"
 import {
   Heart,
   Share,
+  Upload,
 } from "lucide-react"
 import { Container, Model } from '@/types';
 import AddModelDialog from '../AddModelDialog';
 import { useToggleLike } from "@/hooks/container/use-toggle-like";
 import { toast } from 'sonner';
+import { useMutation } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
+import { UploadButton, UploadFileResponse } from "@xixixao/uploadstuff/react";
+import "@xixixao/uploadstuff/react/styles.css";
 
 type ModelHeaderProps = {
   container: Container;
@@ -20,6 +25,7 @@ type ModelHeaderProps = {
 const ModelHeader = ({ container, model, layerAttrs }: ModelHeaderProps) => {
   const isLiked = container?.liked;
   const { mutate } = useToggleLike();
+  const generateUploadUrl = useMutation(api.data.generateUploadUrl)
 
   const handleLike = async () => {
     mutate({ id: container._id },
@@ -64,6 +70,31 @@ const ModelHeader = ({ container, model, layerAttrs }: ModelHeaderProps) => {
       <Share className="size-3.5"/>
       Share
     </Button>
+    <UploadButton
+      className={(progress: number | null) =>
+        "!gap-1.5 !h-7 text-xs !bg-transparent dark:!text-zinc-200 !border dark:!border-zinc-800 hover:!bg-zinc-900 flex items-center justify-center px-2"
+      }
+      uploadUrl={generateUploadUrl}
+      fileTypes={["text/*", "application/*"]}
+      onUploadComplete={async (
+        uploaded: UploadFileResponse[]
+      ) => {
+        const uploadedFile = (
+          uploaded[0].response as any
+        ).storageId as string;
+
+        console.log("uploadedFile", uploadedFile)
+      }}
+      onUploadError={(error: unknown) => {
+        alert(`ERROR! ${error}`);
+      }}
+      content={(progress: number | null): string => {
+        if (progress === null) {
+          return `Upload dataset`
+        }
+        return `${progress}%`;
+      }}
+    />
     <AddModelDialog container={container as Container} />
     </div>
   </header>
