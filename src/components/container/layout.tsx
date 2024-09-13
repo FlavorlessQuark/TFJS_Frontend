@@ -102,7 +102,7 @@ export default function ContainerLayout({ data }: ContainerLayoutProps) {
               </Link>
             ))
           ) : (
-            <div className="col-span-full flex items-center justify-center border border-dashed rounded-lg p-8">
+            <div className="col-span-full flex items-center justify-center border border-dashed p-8">
               <div className="text-center">
                 <h3 className="text-2xl font-bold tracking-tight mb-2">
                   {isFilterActive ? "No matching containers found" : "You have no containers"}
@@ -121,7 +121,7 @@ export default function ContainerLayout({ data }: ContainerLayoutProps) {
       {/* Right side */}
       {state.openFilter && (
         <div className="w-full lg:w-1/3 lg:sticky lg:top-6 bg-[#121212]">
-          <div className="border border-purple-400 rounded-lg p-4">
+          <div className="border border-purple-400 p-4">
             <div className="flex justify-between items-center border-b border-zinc-800 pb-2 mb-4">
               <h5 className="text-sm font-medium">Filter</h5>
               <div className="flex flex-row items-center space-x-2">

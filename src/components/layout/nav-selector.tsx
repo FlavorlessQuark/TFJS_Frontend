@@ -48,7 +48,7 @@ const NavSelector = ({pathname}: {pathname: string}) => {
               variant="outline"
               role="combobox"
               aria-expanded={open}
-              className="w-[200px] justify-between !h-7 !border !border-zinc-800 !rounded-lg !bg-zinc-950 text-xs"
+              className="w-[200px] justify-between !h-7 !border !border-zinc-800 !bg-zinc-950 text-xs"
             >
               {value
                 ? datasets.find((dataset) => dataset.value === value)?.label
@@ -69,7 +69,7 @@ const NavSelector = ({pathname}: {pathname: string}) => {
                     No results found.
                     <UploadButton
                         className={(progress: number | null) =>
-                          "cursor-pointer text-white py-1 px-2 rounded-lg flex justify-center items-center border border-zinc-800 w-full"
+                          "cursor-pointer text-white py-1 px-2 flex justify-center items-center border border-zinc-800 w-full"
                         }
                         uploadUrl={generateUploadUrl}
                         fileTypes={[
@@ -128,7 +128,7 @@ const NavSelector = ({pathname}: {pathname: string}) => {
           <Button 
             variant="outline" 
             size="sm" 
-            className="!h-7 !border !border-zinc-800 !rounded-lg !bg-zinc-950 text-xs"
+            className="!h-7 !border !border-zinc-800 !bg-zinc-950 text-xs"
             onClick={() => setState("openFilter", !state.openFilter)}
             >
             Filter

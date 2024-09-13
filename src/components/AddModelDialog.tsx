@@ -135,7 +135,7 @@ const AddModelDialog = ({ container, acceptedFiles }: { container: Container, ac
                   <Label className={'text-zinc-500 uppercase text-[10px] u'}>Dataset</Label>
                     {acceptedFiles.map((file, index) => (
                       <span key={index} className={'text-zinc-200 text-sm'}>
-                        {file.name} - <span className={'bg-zinc-950 text-zinc-500 px-1 rounded-sm text-xs'}>{formatBytes(file.size)}</span>
+                        {file.name} - <span className={'bg-zinc-950 text-zinc-500 px-1 text-xs'}>{formatBytes(file.size)}</span>
                       </span>
                     ))}
                 </div>

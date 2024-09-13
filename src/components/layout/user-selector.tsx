@@ -59,7 +59,7 @@ const UserSelector = () => {
             {menuItems.map((item, index) => (
               <div key={index}>
                 {!item.submenu && (
-                  <DropdownMenuItem className='rounded-lg' onClick={item.onClick}>
+                  <DropdownMenuItem onClick={item.onClick}>
                     <div className="flex items-center gap-3">
                       <Avatar className='h-4 w-4'>
                         {item.icon}
@@ -71,7 +71,7 @@ const UserSelector = () => {
 
                 {item.submenu && (
                   <DropdownMenuSub>
-                    <DropdownMenuSubTrigger className='rounded-lg hover:bg-zinc-800/50'>
+                    <DropdownMenuSubTrigger className='hover:bg-zinc-800/50'>
                       <div className="flex items-center gap-3">
                         <Avatar className='h-4 w-4'>
                           {item.icon}
@@ -79,9 +79,9 @@ const UserSelector = () => {
                         {item.text}
                       </div>
                     </DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent className='rounded-xl bg-zinc-900 hover:bg-zinc-800/50'>
+                    <DropdownMenuSubContent className='bg-zinc-900 hover:bg-zinc-800/50'>
                       {item.submenu.map((subitem, subindex) => (
-                        <DropdownMenuItem key={subindex} onClick={subitem.onClick} className='rounded-lg bg-zinc-100 hover:!bg-zinc-200 dark:bg-zinc-900 dark:hover:!hover-bg'>
+                        <DropdownMenuItem key={subindex} onClick={subitem.onClick} className='bg-zinc-100 hover:!bg-zinc-200 dark:bg-zinc-900 dark:hover:!hover-bg'>
                           {subitem.text}
                         </DropdownMenuItem>
                       ))}

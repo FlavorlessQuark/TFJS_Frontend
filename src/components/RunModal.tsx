@@ -108,7 +108,7 @@ const RunModal = ({ model }: { model: Model }) => {
 
               <Separator className={'my-4 w-4/5'}/>
 
-              <div className={'my-4 w-4/5 p-4 border border-muted bg-accent/50 rounded-xl text-sm flex items-center justify-center text-zinc-200'}>
+              <div className={'my-4 w-4/5 p-4 border border-muted bg-accent/50 text-sm flex items-center justify-center text-zinc-200'}>
                 Once your Model is created, you can upload your files using the web interface.
               </div>
 

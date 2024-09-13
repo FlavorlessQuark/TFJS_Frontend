@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils";
 import RunModal from "../RunModal";
 
 const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
-	const testRun = useAction(api.tensorflow_fn.run_model)
+	const testRun = useAction(api.tensorflow.tf_model.run_model)
 	const [selectedLayer, setSelectedLayer] = useState("")
 	const [openAccordions, setOpenAccordions] = useState<string[]>([]);
 	const [hoveredParam, setHoveredParam] = useState<number | null>(null);
@@ -60,7 +60,7 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 
 	return (
 		<form className="grid w-96 items-start gap-6">
-			<fieldset className="grid gap-6 rounded-lg border p-4">
+			<fieldset className="grid gap-6 border p-4">
 				<legend className="-ml-1 px-1 text-sm font-medium">
 					{model.name}
 				</legend>
@@ -134,7 +134,7 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 											onMouseEnter={() => setHoveredParam(paramIdx)}
 											onMouseLeave={() => setHoveredParam(null)}
 										>
-											{e.name}: <span className="ml-2 text-zinc-500 card-title bg-zinc-950 rounded-md px-1">{e.value}</span>
+											{e.name}: <span className="ml-2 text-zinc-500 card-title bg-zinc-950 px-1">{e.value}</span>
 											{hoveredParam === paramIdx && (
 												<AlertDialog>
 													<AlertDialogTrigger asChild>
