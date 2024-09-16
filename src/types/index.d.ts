@@ -49,11 +49,20 @@ export interface Container {
 	sharedWith: Id<"users">[];
 	views: number;
 	_creationTime: number;
-     compileOptions: {
+    compileOptions: {
         batchSize: number,
         epochs:number,
         loss:string,
         metrics:string
+    }
+    dataset?:{
+        name: string,
+        creator: any,
+        description?: string,
+        tags?: Array<string>,
+        xshape:Array<number>,
+        yshape:Array<number>,
+        dataref?: any
     }
 }
 
