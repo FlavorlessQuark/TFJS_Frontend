@@ -49,6 +49,12 @@ export interface Container {
 	sharedWith: Id<"users">[];
 	views: number;
 	_creationTime: number;
+     compileOptions: {
+        batchSize: number,
+        epochs:number,
+        loss:string,
+        metrics:string
+    }
 }
 
 export interface LayerAttrs {

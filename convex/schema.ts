@@ -16,6 +16,12 @@ export default defineSchema({
     public: v.boolean(),
     views: v.optional(v.number()),
     sharedWith: v.optional(v.array(v.id("users"))),
+    compileOptions: (v.object({
+        batchSize: v.number(),
+        epochs:v.number(),
+        loss:v.string(),
+        metrics:v.string()
+    }))
   })
     .index("by_creator", ["creator"])
     .index("by_public", ["public"]),

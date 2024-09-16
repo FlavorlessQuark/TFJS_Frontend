@@ -1,29 +1,26 @@
+import { Button } from "@/components/ui/button.tsx";
 import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogTrigger,
 } from "@/components/ui/dialog";
-import { useGlobalState } from "@/providers/StateProvider";
-import {Button} from "@/components/ui/button.tsx";
-import {Box, CirclePlay, Plus} from "lucide-react";
+import {
+    Form
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {useQuery} from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator.tsx";
+import { useCreateModel } from "@/hooks/model/use-create-model";
+import { useGlobalState } from "@/providers/StateProvider";
+import { Container } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAction, useQuery } from "convex/react";
+import { CirclePlay } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { toast } from "sonner"
-import {Separator} from "@/components/ui/separator.tsx";
-import { useCreateModel } from "@/hooks/model/use-create-model";
-import { Container, Model } from "@/types";
+import { api } from "../../convex/_generated/api";
 
 const FormSchema = z.object({
   name: z.string().min(2, {
@@ -32,16 +29,40 @@ const FormSchema = z.object({
   modelId: z.string().optional(),
 })
 
-const RunModal = ({ model }: { model: Model }) => {
+const RunModal = ({ container }: { container: Container }) => {
   const { state, setState } = useGlobalState();
+  const [selectedOption, setOptions] = useState({
+    batchSize: 5,
+    epochs:5,
+    loss:"meanSquaredError",
+    metrics:"accuracy"
+  });
   const user = useQuery(api.users.viewer);
   const { mutate, isLoading } = useCreateModel();
+  const run = useAction(api.tensorflow.tf_model.run_container)
+
+  const options = {
+    "batchSize": {  "min": 1, "max": 10, options:[]},
+    "epochs": {  "min": 1, "max": 10, options: []},
+    "loss": { options:
+          [
+            "absoluteDifference","computeWeightedLoss","cosineDistance",
+            "hingeLoss","huberLoss","logLoss","meanSquaredError",
+            "sigmoidCrossEntropy","softmaxCrossEntropy","binaryCrossentropy"
+        ]},
+    "metrics": { options: [
+            "accuracy", "binaryAccuracy","binaryCrossentropy","categoricalAccuracy",
+            "categoricalCrossentropy","cosineProximity","mape","meanAbsoluteError",
+            "meanAbsolutePercentageError","meanSquaredError","mse","precision",
+            "r2Score","recall","sparseCategoricalAccuracy",
+    ]}
+  }
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
-      modelId: model._id
+      modelId: container._id
     },
   })
 
@@ -74,38 +95,41 @@ const RunModal = ({ model }: { model: Model }) => {
                   Compile and Run
                 </span>
                 <span className={'text-lg font-thin text-zinc-600'}>
-                  Compile and run your model.
+                  Compile and run your models.
                 </span>
               </div>
 
               {/* Run commands */}
-              <div className={'flex flex-row items-center justify-center w-4/5 gap-x-4'}>
-                <div className="grid w-1/3 items-center gap-1.5">
-                  <Label htmlFor="container" className={'text-zinc-200 font-thin'}>Build Command</Label>
-                </div>
-                <div className="grid w-2/3 items-center gap-1.5">
-                  <Input disabled type="container" id="container" placeholder={model?.name}/>
-                </div>
-              </div>
-
-              <div className={'flex flex-row items-center justify-center w-4/5 gap-x-4'}>
-                <div className="grid w-1/3 items-center gap-1.5">
-                  <Label htmlFor="container" className={'text-zinc-200 font-thin'}>Build Command</Label>
-                </div>
-                <div className="grid w-2/3 items-center gap-1.5">
-                  <Input disabled type="container" id="container" placeholder={model?.name}/>
-                </div>
-              </div>
-              
-              <div className={'flex flex-row items-center justify-center w-4/5 gap-x-4'}>
-                <div className="grid w-1/3 items-center gap-1.5">
-                  <Label htmlFor="container" className={'text-zinc-200 font-thin'}>Build Command</Label>
-                </div>
-                <div className="grid w-2/3 items-center gap-1.5">
-                  <Input disabled type="container" id="container" placeholder={model?.name}/>
-                </div>
-              </div>
-
+              {
+                Object.keys(options).map((field) => (
+                    <div className={'flex flex-row items-center justify-center w-4/5 gap-x-4'}>
+                        <div className="grid w-1/3 items-center gap-1.5">
+                        <Label htmlFor="container" className={'text-zinc-200 font-thin'}>{field}</Label>
+                        </div>
+                        <div className="grid w-2/3 items-center gap-1.5">
+                            {
+                                typeof container.compileOptions[field as keyof typeof options] === "number" ?
+                                    <Input type="number" id="container" min={options[field].min} max={options[field].max} placeholder={container.compileOptions[field as keyof typeof options].toString()}/>
+                                    :
+                                    <Select onValueChange={(e) => setOptions(e)}>
+                                        <SelectTrigger id="model" className="items-start [&_[data-description]]:hidden">
+                                            <SelectValue placeholder={container.compileOptions[field]} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {
+                                                options[field as keyof typeof options].options.map((val) => (
+                                                    <SelectItem key={val} value={val}>
+                                                        {val}
+                                                    </SelectItem>
+                                                )
+                                            )}
+                                        </SelectContent>
+                                </Select>
+                            }
+                        </div>
+                    </div>
+                ))
+              }
               <Separator className={'my-4 w-4/5'}/>
 
               <div className={'my-4 w-4/5 p-4 border border-muted bg-accent/50 text-sm flex items-center justify-center text-zinc-200'}>
@@ -113,7 +137,7 @@ const RunModal = ({ model }: { model: Model }) => {
               </div>
 
               <div className={'w-4/5 flex items-end justify-end'}>
-                <Button onClick={(e) => e.preventDefault()}>
+                <Button onClick={async (e) => {e.preventDefault(); await run({id:container._id})}}>
                   Run model
                 </Button>
               </div>
