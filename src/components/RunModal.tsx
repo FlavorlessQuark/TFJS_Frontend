@@ -17,7 +17,7 @@ import { Container } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction, useQuery } from "convex/react";
 import { CirclePlay } from "lucide-react";
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "../../convex/_generated/api";
@@ -78,6 +78,10 @@ const RunModal = ({ container }: { container: Container }) => {
     }
   };
 
+  useEffect (() => {
+    setOptions(container.compileOptions)
+  }, [container])
+
   return (
     <Dialog open={state.openRunModal} onOpenChange={onClose}>
       <DialogTrigger onClick={() => setState("openModelLayer", true)}>
@@ -109,11 +113,11 @@ const RunModal = ({ container }: { container: Container }) => {
                         <div className="grid w-2/3 items-center gap-1.5">
                             {
                                 typeof container.compileOptions[field as keyof typeof options] === "number" ?
-                                    <Input type="number" id="container" min={options[field].min} max={options[field].max} placeholder={container.compileOptions[field as keyof typeof options].toString()}/>
+                                    <Input type="number" id="container" min={options[field].min} max={options[field].max} placeholder={selectedOption[field as keyof typeof options].toString()}/>
                                     :
-                                    <Select onValueChange={(e) => setOptions(e)}>
+                                    <Select onValueChange={(e) => setOptions({...selectedOption,[field]: e})}>
                                         <SelectTrigger id="model" className="items-start [&_[data-description]]:hidden">
-                                            <SelectValue placeholder={container.compileOptions[field]} />
+                                            <SelectValue placeholder={selectedOption[field]} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {
@@ -137,7 +141,7 @@ const RunModal = ({ container }: { container: Container }) => {
               </div>
 
               <div className={'w-4/5 flex items-end justify-end'}>
-                <Button onClick={async (e) => {e.preventDefault(); await run({id:container._id})}}>
+                <Button onClick={async (e) => {e.preventDefault(); await run({id:container._id, options: selectedOption})}}>
                   Run model
                 </Button>
               </div>

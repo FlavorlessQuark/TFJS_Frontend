@@ -58,7 +58,7 @@ function ContainerId() {
     <main className="grid w-full">
         <div className="flex flex-col">
           <main className="grid flex-1 gap-4 overflow-auto p-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            <div className="relative flex flex-col items-start gap-4 h-[calc(100vh-125px)]">
+            <div className="relative flex flex-row items-start gap-4 h-[calc(100vh-125px)]">
               {models && models.map((elem, i) => (
                 elem && <div key={elem.name + i} className="w-full">
                   <ModelContainer layerAttrs={layerAttrs} model={elem} container={container as any} />
