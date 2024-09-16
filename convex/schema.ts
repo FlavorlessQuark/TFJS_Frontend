@@ -56,6 +56,8 @@ export default defineSchema({
         creator: v.id('users'),
         description: v.optional(v.string()),
         tags:v.optional(v.array(v.string())),
+        xshape:v.array(v.number()),
+        yshape:v.array(v.number()),
         dataref: v.id("dataref")
     }),
     dataref:defineTable({

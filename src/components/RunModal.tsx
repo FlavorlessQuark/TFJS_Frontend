@@ -137,11 +137,19 @@ const RunModal = ({ container }: { container: Container }) => {
               <Separator className={'my-4 w-4/5'}/>
 
               <div className={'my-4 w-4/5 p-4 border border-muted bg-accent/50 text-sm flex items-center justify-center text-zinc-200'}>
-                Once your Model is created, you can upload your files using the web interface.
+                {
+                    container.dataset ?
+                    <>
+                    Using dataset : {container.dataset.name} Input shape : {"[" + container.dataset.xshape.join(" ") + "]"} Output shape : { "[" + container.dataset.yshape.join(" ") + "]"}
+                    </>
+
+                        :
+                    "You need to upload or use an existing dataset before you can run your model"
+                }
               </div>
 
               <div className={'w-4/5 flex items-end justify-end'}>
-                <Button onClick={async (e) => {e.preventDefault(); await run({id:container._id, options: selectedOption})}}>
+                <Button disabled={!container.dataset} onClick={async (e) => {e.preventDefault(); await run({id:container._id, options: selectedOption})}}>
                   Run model
                 </Button>
               </div>

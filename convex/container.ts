@@ -2,6 +2,7 @@ import {internalMutation, internalQuery, mutation, query } from "./_generated/se
 import {ConvexError, v} from "convex/values";
 import { user, allowed } from "./helpers";
 import { internal } from "./_generated/api";
+import { data } from "@tensorflow/tfjs";
 
 /**
  * Mutations for the container table
@@ -171,11 +172,17 @@ export const getContainer = query({
       });
     }
 
+    let dataset = undefined;
+    if (container.dataset) {
+        dataset = await ctx.db.get(container.dataset);
+    }
+
     const liked = container.likes?.includes(userId);
 
     return {
       ...container,
       creator: creator,
+      dataset: dataset,
       liked,
     };
   }

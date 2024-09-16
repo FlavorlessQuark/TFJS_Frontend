@@ -41,20 +41,21 @@ export const saveDataset = mutation({
             file = dataParseFrom_Csv(args.file)
 
         if (file) {
+            const refId = await ctx.db.insert("dataref", file)
+            const self = await user(ctx)
 
-        const refId = await ctx.db.insert("dataref", file)
-        const self = await user(ctx)
+            const dataset = await ctx.db.insert('dataset', {
+                name:args.name,
+                description: args.description,
+                dataref: refId,
+                tags: args.tags,
+                creator: self,
+                xshape:file.xshape,
+                yshape:file.yshape
+            })
 
-        const dataset = await ctx.db.insert('dataset', {
-            name:args.name,
-            description: args.description,
-            dataref: refId,
-            tags: args.tags,
-            creator: self,
-        })
-
-        if (args.id)
-            await ctx.db.patch(args.id, {dataset: dataset})
+            if (args.id)
+                await ctx.db.patch(args.id, {dataset: dataset})
         }
     }
 })
