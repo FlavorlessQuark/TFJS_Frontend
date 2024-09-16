@@ -1,4 +1,4 @@
-import {internalQuery, mutation, query } from "./_generated/server";
+import {internalMutation, internalQuery, mutation, query } from "./_generated/server";
 import {ConvexError, v} from "convex/values";
 import { user, allowed } from "./helpers";
 import { internal } from "./_generated/api";
@@ -332,6 +332,25 @@ export const saveContainerModel = mutation({
 
     await ctx.db.patch(id, {
       layers
+    })
+  },
+});
+
+export const saveContainerOptions = internalMutation({
+  args: {
+    id: v.id("container"),
+    options: v.object({
+        batchSize: v.number(),
+        epochs:v.number(),
+        loss:v.string(),
+        metrics:v.string()}
+        )
+  },
+  handler: async (ctx, args) => {
+    const {id, options} = args
+
+    await ctx.db.patch(id, {
+      compileOptions:options
     })
   },
 });

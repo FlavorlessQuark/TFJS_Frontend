@@ -68,7 +68,15 @@ export const run_model = async(_model: Doc<"model">, dataset: Doc<"dataref">, ct
 }
 
 export const run_container = action({
-  args: {id: v.id('container')},
+  args: {
+    id: v.id('container'),
+    options: v.object({
+        batchSize: v.number(),
+        epochs:v.number(),
+        loss:v.string(),
+        metrics:v.string()}
+        )
+    },
   handler: async (ctx, args) => {
 
     const container = await ctx.runQuery(internal.container.getInternalContainer, args)
@@ -79,6 +87,7 @@ export const run_container = action({
     if (!container.models)
         throw "No models found";
 
+    await ctx.runMutation(internal.container.saveContainerOptions, {id: args.id, options:args.options})
     const _dataset = await ctx.runQuery(internal.data.getSet, {id: container.dataset})
 
     if (!_dataset)
@@ -94,7 +103,7 @@ export const run_container = action({
         let model = await ctx.runQuery(internal.model.getModel, {id: model_id})
 
         if (model) {
-            run_model(model, _dataref, ctx, container.compileOptions)
+            run_model(model, _dataref, ctx, args.options)
         }
     }
 
