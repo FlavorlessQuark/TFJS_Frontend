@@ -34,7 +34,17 @@ export const updateModel_Logs = internalMutation({
             if (model.logs && model.logs.logs.length > args.batchNum) {
                 model.logs.logs = []
             }
-            model.logs.logs.push(args.logs)
+            let logObj = args.logs
+            try {
+                logObj = JSON.parse(args.logs);
+            } catch {}
+            let output = "";
+            for (const key in logObj) {
+                if (key !== "batch") {
+                    output += `${key}: ${logObj[key]}  `;
+                }
+            }
+            model.logs.logs.push(output)
             ctx.db.patch(args.id, model)
         }
 
