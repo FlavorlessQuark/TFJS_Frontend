@@ -35,7 +35,7 @@ const ModelParamValue = ({selectedType, setSelectedParamValue, options}: ModelPa
             {
                 selectedType == "[]" &&
                     <div>
-                        <input defaultValue={"Enter comma separated values"} onChange={(e) =>
+                        <input placeholder={"Enter comma separated values"} onChange={(e) =>
                             {
                                 const strArr = e.target.value.split(",");
                                 setSelectedParamValue(strArr.map(Number));
