@@ -13,6 +13,16 @@ export const getRef = internalQuery({
     }
 })
 
+export const getSet = internalQuery({
+    args: {
+        id: v.id('dataset'),
+    },
+    handler: async (ctx, args) => {
+        return await ctx.db.get(args.id);
+    }
+})
+
+
 export const saveDataset = mutation({
     args: {
         id: v.optional(v.id("container")),
@@ -51,11 +61,11 @@ export const saveDataset = mutation({
 
 export const generateUploadUrl = mutation(async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
-  
+
     if (!identity) {
       throw new ConvexError("you must be logged in to upload a file");
     }
-  
+
     return await ctx.storage.generateUploadUrl();
   });
 

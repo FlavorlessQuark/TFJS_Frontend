@@ -72,15 +72,15 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 							collapsible
 							value={openAccordions.includes(String(i)) ? String(i) : undefined}
 							onValueChange={(value) => {
-								setOpenAccordions(prev => 
-									value 
+								setOpenAccordions(prev =>
+									value
 										? [...prev, value]
 										: prev.filter(item => item !== String(i))
 								);
 							}}
 						>
-							<AccordionItem 
-								value={String(i)} 
+							<AccordionItem
+								value={String(i)}
 								className="!bg-zinc-900 px-4 !border !border-purple-400/40 hover:!border-purple-400"
 								onMouseEnter={() => setHoveredAccordion(i)}
 								onMouseLeave={() => setHoveredAccordion(null)}
@@ -93,7 +93,7 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 										<AlertDialogTrigger asChild>
 										<Button
 											onClick={(e) => e.stopPropagation()}
-											variant="outline" 
+											variant="outline"
 											className="ml-2 !h-4 !border-none !px-1 !bg-white !text-zinc-950 !hover:!bg-white/40 !text-xs !font-thin card-title"
 										>
 											Remove
@@ -128,8 +128,8 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 										</div>
 									)}
 									{layer.parameters.map((e, paramIdx) => (
-										<div 
-											className="card-title text-xs flex items-center" 
+										<div
+											className="card-title text-xs flex items-center"
 											key={e.name}
 											onMouseEnter={() => setHoveredParam(paramIdx)}
 											onMouseLeave={() => setHoveredParam(null)}
@@ -138,8 +138,8 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 											{hoveredParam === paramIdx && (
 												<AlertDialog>
 													<AlertDialogTrigger asChild>
-														<Button 
-															variant="outline" 
+														<Button
+															variant="outline"
 															className="ml-2 !h-4 !border-none !px-1 !bg-white !text-zinc-950 !hover:!bg-white/40 !text-xs !font-thin card-title"
 														>
 															Edit
@@ -199,11 +199,11 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 						<Button className="mt-1 w-full !bg-zinc-100 hover:!bg-zinc-300 hover:!text-zinc-950" onClick={(e) => addSelectedLayer(e)}> Add</Button>
 						{/* <Button onClick={async () => await testRun({id:elem?._id})}> Run Model (test button)</Button> */}
 						<div className="flex flex-row items-center mt-4 justify-between">
-						<RunModal model={model} />
 
-						<Button 
-							variant="outline" 
-							size="icon" 
+
+						<Button
+							variant="outline"
+							size="icon"
 							className="h-5 w-5 border-none hover:!bg-zinc-900 hover:!text-zinc-50 !bg-transparent"
 							onClick={(e) => {
 								e.preventDefault();

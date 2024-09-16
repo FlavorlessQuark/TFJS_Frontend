@@ -26,6 +26,12 @@ export const createContainer = mutation({
       ...args,
       sharedWith: [userId],
       creator: userId,
+      compileOptions: {
+        batchSize:5,
+        epochs:5,
+        loss:"meanSquaredError",
+        metrics:"accuracy"
+      }
     });
 
     if (args.tags) {
@@ -105,6 +111,16 @@ export const getMyContainers = query({
       return containersWithCreator;
   }
 });
+
+
+export const getInternalContainer = internalQuery({
+    args: {
+        id:v.id('container')
+    },
+    handler: async (ctx, args) => {
+        return await ctx.db.get(args.id)
+    }
+})
 
 /**
  * Get a container by id
@@ -223,9 +239,9 @@ export const createContainerModel = mutation({
             await ctx.db.patch(args.id, {models: container.models})
         }
 
-        return { 
-          _id: model, 
-          name: args.name, 
+        return {
+          _id: model,
+          name: args.name,
           layers: [],
           logs: {},
           message: "Model created",

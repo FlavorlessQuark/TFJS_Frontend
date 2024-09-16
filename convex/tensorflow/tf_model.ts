@@ -7,8 +7,9 @@ import { action } from "../_generated/server";
 import { dataMakeTensors, make_dummy_data } from "./data";
 import { mappings } from "./tf_fn_mapping";
 import tf, { layers } from "@tensorflow/tfjs";
+import { Doc, Id } from "../_generated/dataModel";
 
- const build_model = (model: tf.Sequential,  model_layers:any) =>
+ const build_model = (model: tf.Sequential,  model_layers:any, options:any) =>
 {
     model.resetStates()
     for (const layer of model_layers) {
@@ -24,42 +25,30 @@ import tf, { layers } from "@tensorflow/tfjs";
             model.add(mappings[key](constructed_params));
         }
     }
-
     const optimizer = tf.train.adam();
     model.compile({
         optimizer: optimizer,
-        loss: 'binaryCrossentropy',
-        metrics: ['accuracy'],
-
+        loss: options.loss,
+        metrics: [options.metrics],
     });
 }
 
-export const run_model = action({
-  args: {id: v.id('model'), refId: v.id("dataref")},
-  handler: async (ctx, args) => {
+export const run_model = async(_model: Doc<"model">, dataset: Doc<"dataref">, ctx:any, compileOptions: any) => {
 
-    const _model = await ctx.runQuery(internal.model.getModel, {id: args.id})
-    const dataset = await ctx.runQuery(internal.data.getRef, {id: args.refId});
     const model = tf.sequential();
 
-    if (!dataset)
-        throw "No dataset found";
-    if (!_model)
-        throw "No model found";
-    // const data = make_dummy_data();
-    const BATCHSIZE = 5;
-    const EPOCHS = 10
+
     const TRAIN_COUNT = Math.floor(dataset.data.x.length * 0.37)
     const TEST_COUNT = Math.floor(dataset.data.x.length * 0.25)
 
 
     const [train, validation, test] = dataMakeTensors(dataset, TRAIN_COUNT, TEST_COUNT);
-    build_model(model, _model.layers)
+    build_model(model, _model.layers, compileOptions)
 
     await model.fit(train.x, train.y, {
-        batchSize: BATCHSIZE,
+        batchSize: compileOptions.batchSize,
         validationData: [validation.x, validation.y],
-        epochs: EPOCHS,
+        epochs: compileOptions.epochs,
         shuffle: true,
         callbacks: {
             onTrainBegin: async () => {
@@ -69,11 +58,45 @@ export const run_model = action({
             console.log("onTrainEnd")
             },
             onBatchEnd: async (epoch, logs) => {
-                await ctx.runMutation(internal.model.updateModel_Logs, {logs: logs, id:args.id, batchNum:epoch})
+                await ctx.runMutation(internal.model.updateModel_Logs, {logs: logs, id:_model._id, batchNum:epoch})
             }
         }})
 
-    const result = (model.evaluate(test.x, test.y))
+    // const result = (model.evaluate(test.x, test.y))
 
-    console.log("result", result)
+
+}
+
+export const run_container = action({
+  args: {id: v.id('container')},
+  handler: async (ctx, args) => {
+
+    const container = await ctx.runQuery(internal.container.getInternalContainer, args)
+    if (!container)
+        throw "No container found";
+    if (!container.dataset)
+        throw "No dataset found";
+    if (!container.models)
+        throw "No models found";
+
+    const _dataset = await ctx.runQuery(internal.data.getSet, {id: container.dataset})
+
+    if (!_dataset)
+        throw "Nop dataset found"
+
+    const _dataref = await ctx.runQuery(internal.data.getRef, {id: _dataset.dataref})
+     if (!_dataref)
+        throw "Nop dataset found"
+
+    // const data = make_dummy_data();
+
+    for (let model_id of container.models) {
+        let model = await ctx.runQuery(internal.model.getModel, {id: model_id})
+
+        if (model) {
+            run_model(model, _dataref, ctx, container.compileOptions)
+        }
+    }
+
+    // console.log("result", result)
 }});
