@@ -135,21 +135,6 @@ export const getContainer = query({
   handler: async (ctx, args) => {
     const userId = await user(ctx);
     const container = await ctx.db.get(args.id);
-    const authorized = await allowed(ctx, args.id);
-
-    if (!userId) {
-      throw new ConvexError({
-        message: "No credentials provided",
-        severity: "low",
-      });
-    }
-
-    if (!authorized) {
-      throw new ConvexError({
-        message: "You do not have permission to view this container",
-        severity: "low",
-      });
-    }
 
     if (!container) {
       throw new ConvexError({
@@ -158,7 +143,14 @@ export const getContainer = query({
       });
     }
 
-    console.log("container past second check")
+    const authorized = container.public || await allowed(ctx, args.id);
+
+    if (!authorized) {
+      throw new ConvexError({
+        message: "You do not have permission to view this container",
+        severity: "low",
+      });
+    }
 
     const creator = await ctx.db
         .query("users")
@@ -177,7 +169,7 @@ export const getContainer = query({
         dataset = await ctx.db.get(container.dataset);
     }
 
-    const liked = container.likes?.includes(userId);
+    const liked = userId ? container.likes?.includes(userId) : false;
 
     return {
       ...container,
