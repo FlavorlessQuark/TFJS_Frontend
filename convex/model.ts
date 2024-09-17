@@ -24,8 +24,8 @@ export const updateModel_Logs = internalMutation({
         batchNum: v.number(),
     },
     handler: async (ctx, args) => {
+        console.log("updating logs")
         const model = await ctx.db.get(args.id)
-
         if (model) {
 
             if (!model.logs)  {
@@ -34,18 +34,31 @@ export const updateModel_Logs = internalMutation({
             if (model.logs && model.logs.logs.length > args.batchNum) {
                 model.logs.logs = []
             }
-            let logObj = args.logs
-            try {
-                logObj = JSON.parse(args.logs);
-            } catch {}
-            let output = "";
-            for (const key in logObj) {
-                if (key !== "batch") {
-                    output += `${key}: ${logObj[key]}  `;
+            const formattedLogs = args.logs.map((log:any) => {
+                let logObj = log
+                try {
+                    logObj = JSON.parse(log);
+                } catch {}
+                let output = "";
+                for (const key in logObj) {
+                    if (key !== "batch") {
+                        output += `${key}: ${typeof logObj[key] === "number" ? logObj[key].toFixed(2) : logObj[key]}  `;
+                    }
                 }
-            }
-            model.logs.logs.push(output)
-            ctx.db.patch(args.id, model)
+                return output;
+            });
+            // let logObj = args.logs
+            // try {
+            //     logObj = JSON.parse(args.logs);
+            // } catch {}
+            // let output = "";
+            // for (const key in logObj) {
+            //     if (key !== "batch") {
+            //         output += `${key}: ${logObj[key]}  `;
+            //     }
+            // }
+            model.logs.logs = formattedLogs
+            await ctx.db.patch(args.id, model)
         }
 
     }
