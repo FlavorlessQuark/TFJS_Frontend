@@ -6,6 +6,7 @@ type State = {
   openModelLayer: boolean;
   openRunModal: boolean;
   openFilter: boolean;
+  openDatasetModal: boolean;
 };
 
 type StateContextType = {
@@ -22,6 +23,7 @@ export const StateProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     openModelLayer: false,
     openFilter: false,
     openRunModal: false,
+    openDatasetModal: false,
   });
 
   const setState = (key: keyof State, value: any) => {

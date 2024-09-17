@@ -85,9 +85,9 @@ const RunModal = ({ container }: { container: Container }) => {
   return (
     <Dialog open={state.openRunModal} onOpenChange={onClose}>
       <DialogTrigger onClick={() => setState("openModelLayer", true)}>
-        <span className="text-xs text-muted-foreground card-title hover:!text-zinc-100 cursor-pointer hover:underline">
+        <Button className="h-7 text-xs !bg-transparent dark:!text-zinc-200 !border dark:!border-purple-400/40 hover:!border-purple-400 gap-1.5 hover:!bg-zinc-900 card-title" disabled={isLoading}>
           Compile and Run
-        </span>
+        </Button>
       </DialogTrigger>
       <DialogContent className={'p-10 md:!w-[800px] !app-bg'}>
         <Form {...form}>

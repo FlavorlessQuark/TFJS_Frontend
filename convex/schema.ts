@@ -16,11 +16,11 @@ export default defineSchema({
     public: v.boolean(),
     views: v.optional(v.number()),
     sharedWith: v.optional(v.array(v.id("users"))),
-    compileOptions: (v.object({
-        batchSize: v.number(),
-        epochs:v.number(),
-        loss:v.string(),
-        metrics:v.string()
+    compileOptions: v.optional(v.object({
+        batchSize: v.optional(v.number()),
+        epochs:v.optional(v.number()),
+        loss:v.optional(v.string()),
+        metrics:v.optional(v.string())
     }))
   })
     .index("by_creator", ["creator"])
@@ -56,6 +56,7 @@ export default defineSchema({
         creator: v.id('users'),
         description: v.optional(v.string()),
         tags:v.optional(v.array(v.string())),
+        public: v.optional(v.boolean()),
         xshape:v.array(v.number()),
         yshape:v.array(v.number()),
         dataref: v.id("dataref")

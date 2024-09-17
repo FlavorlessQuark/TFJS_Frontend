@@ -16,6 +16,7 @@ import { api } from '../../../convex/_generated/api';
 import { UploadButton, UploadFileResponse } from "@xixixao/uploadstuff/react";
 import "@xixixao/uploadstuff/react/styles.css";
 import RunModal from '../RunModal';
+import AddDatasetDialog from '../AddDatasetDialog';
 
 type ModelHeaderProps = {
   container: Container;
@@ -96,8 +97,9 @@ const ModelHeader = ({ container, model, layerAttrs }: ModelHeaderProps) => {
         return `${progress}%`;
       }}
     />
-    <RunModal container={container as Container} />
+    <AddDatasetDialog />
     <AddModelDialog container={container as Container} />
+    <RunModal container={container as Container} />
     </div>
   </header>
   )
