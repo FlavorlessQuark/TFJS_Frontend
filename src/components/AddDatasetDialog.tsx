@@ -29,6 +29,7 @@ import { useCreateDataset } from "@/hooks/dataset/use-create-dataset";
 import { useState } from "react";
 import { useCallback } from "react";
 import { useMutation } from "convex/react";
+import { Container } from "@/types";
 
 const FormSchema = z.object({
   name: z.string().min(2, {
@@ -43,7 +44,7 @@ const FormSchema = z.object({
   filetype: z.string(),
 })
 
-const AddDatasetDialog = () => {
+const AddDatasetDialog = ({ container }: { container: Container }) => {
   const { state, setState } = useGlobalState();
   const user = useQuery(api.users.viewer);
   const { mutate, isLoading } = useCreateDataset();
@@ -91,6 +92,7 @@ const AddDatasetDialog = () => {
       public: values.public,
       file: values.file,
       filetype: values.filetype,
+      id:container._id
     }, {
       onSuccess: (data) => {
         console.log("data", data)
@@ -223,7 +225,7 @@ const AddDatasetDialog = () => {
                               body: 'border border-purple-400 bg-purple-400/10',
                             }
                           }}
-                        />                      
+                        />
                       </FormControl>
                       <span className={'text-zinc-200 font-thin text-xs italic'}>
                         * Press enter to add a tag
@@ -297,12 +299,12 @@ const AddDatasetDialog = () => {
               </div>
 
               <div className={'w-4/5 flex items-end justify-end'}>
-                <Button 
+                <Button
                   onClick={(e) => {
                     e.preventDefault();
                     onSubmit(form.getValues());
                   }}
-                  disabled={isLoading} 
+                  disabled={isLoading}
                   type="submit"
                 >
                   Create dataset
