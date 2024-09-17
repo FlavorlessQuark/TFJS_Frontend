@@ -33,8 +33,11 @@ const ContainerCard = ({ container }: ContainerCardProps) => {
   };
 
   return (
-    <Card id={container?._id} className={'md:min-w-[400px] w-full h-16 max-h-32 bg-background/50 hover:bg-background p-4 space-y-1 flex justify-center flex-col'}>
+    <Card id={container?._id} className={'md:min-w-[400px] w-full max-h-48 bg-background/50 hover:bg-background p-4 space-y-1 flex justify-center flex-col'}>
       <CardTitle container={container as Container} />
+      <div>
+        <span className="text-sm text-zinc-600 truncate">{container?.description}</span>
+      </div>
 
       <div className="flex flex-row items-center justify-between space-x-2">
         <div className={'text-xs text-zinc-600'}>

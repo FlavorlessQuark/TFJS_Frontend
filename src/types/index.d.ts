@@ -41,6 +41,7 @@ export interface Container {
     phoneVerificationTime?: number;
     isAnonymous?: boolean;
   };
+  tags?: string[];
 	liked: boolean;
 	description: string | null;
 	models: Id<"model">[];

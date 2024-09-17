@@ -454,3 +454,21 @@ export const getLikedContainers = query({
     return populatedContainers;
   }
 });
+
+export const updateContainer = mutation({
+  args: {
+    id: v.id("container"),
+    name: v.string(),
+    description: v.string(),
+    tags: v.array(v.string()),
+    public: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, { 
+      name: args.name, 
+      description: args.description, 
+      tags: args.tags, 
+      public: args.public 
+    });
+  }
+})
