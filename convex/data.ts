@@ -38,8 +38,11 @@ export const saveDataset = mutation({
         console.log("args", args)
         console.log("file", args.file)
 
-        if (args.filetype == "text/json")
-            file = dataParseFrom_Json(args.file)
+        if (args.filetype == "text/json" || args.filetype == "application/json")
+        {
+            const json_file = JSON.parse(args.file)
+            file = dataParseFrom_Json(json_file)
+        }
         if (args.filetype == "text/csv")
             file = dataParseFrom_Csv(args.file)
 

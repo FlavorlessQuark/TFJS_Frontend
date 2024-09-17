@@ -46,31 +46,35 @@ export const dataParseFrom_Json = (data:any) => {
          - "x", "y" entries are a valid type (num, str, [])
          - x, y can be formed into xshape,yshape
      */
-
-    if(!data.yshape)
-        throw "Not YShape field detected"
-    if(!data.xshape)
-        throw "Not XShape field detected"
+    if(!data["yshape"])
+        throw "Not yshape field detected"
+    if(!data["xshape"])
+        throw "Not xshape field detected"
 
     set.xshape = data.xshape
     set.yshape = data.yshape
 
-    if(!data.x)
+    data = data.data
+    if(!data['x'])
         throw "Not x field detected"
-    if(!data.y)
+    if(!data['y'])
         throw "Not y field detected"
 
-    if (typeof data.x !== typeof [])
+
+    // console.log(data)
+    console.log("string", data.y, data["y"])
+
+    if (!Array.isArray(data["x"]))
         throw "X field is not array"
-    if (typeof data.y !== typeof [])
+    if (!Array.isArray(data['y']))
         throw "Y field is not array"
-    if (data.y.length !== data.x,length)
+    if (data.y.length !== data.x.length)
         throw "Xand Y field length mismatch"
-    if (data.x.length == 0 || typeof data.x[0] !== typeof [])
+    if (data.x.length == 0 || !Array.isArray(data.x[0]))
         throw "Element in X are not arrays"
     if (data.x[0].length == 0)
         throw "Element in X is empty"
-    if (data.y.length == 0 || typeof data.y[0] !== typeof [])
+    if (data.y.length == 0 || !Array.isArray(data.y[0]))
         throw "Element in y are not arrays"
     if (data.y[0].length == 0)
         throw "Element in y is empty"
@@ -95,11 +99,12 @@ export const dataParseFrom_Json = (data:any) => {
         }
     }
 
-    const ycount = data.y[0][0].length
-    const xcount = data.x[0][0].length
+    const ycount = data.y[0].length
+    const xcount = data.x[0].length
 
-    if (xcount !== set.yshape.reduce((total, curr) => total + curr, 0))
-        throw "Invalid yShape for y data"
+    console.log(xcount, set.xshape.reduce((total, curr) => total + curr, 0))
+    if (xcount !== set.xshape.reduce((total, curr) => total + curr, 0))
+        throw "Invalid xShape for x data"
     if (ycount !== set.yshape.reduce((total, curr) => total + curr, 0))
         throw "Invalid yShape for y data"
 
