@@ -46,7 +46,7 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 				model.layers = []
 
 			model.layers.push({ name: selectedLayer, parameters: [] })
-
+            setSelectedLayer("Select a layer")
 			setOpenAccordions(prev => [...prev, String(model.layers.length - 1)])
 			await saveModel({ id: model._id, layers: model.layers })
 		}
@@ -134,7 +134,12 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 											onMouseEnter={() => setHoveredParam(paramIdx)}
 											onMouseLeave={() => setHoveredParam(null)}
 										>
-											{e.name}: <span className="ml-2 text-zinc-500 card-title bg-zinc-950 px-1">{e.value}</span>
+											{e.name}: <span className="ml-2 text-zinc-500 card-title bg-zinc-950 px-1">{
+                                            Array.isArray(e.value) ?
+                                            "[" + e.value.join(",") + "]"
+                                            :
+                                                e.value
+                                            }</span>
 											{hoveredParam === paramIdx && (
 												<AlertDialog>
 													<AlertDialogTrigger asChild>
@@ -142,14 +147,14 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 															variant="outline"
 															className="ml-2 !h-4 !border-none !px-1 !bg-white !text-zinc-950 !hover:!bg-white/40 !text-xs !font-thin card-title"
 														>
-															Edit
+															Delete
 														</Button>
 													</AlertDialogTrigger>
 													<AlertDialogContent>
 														<AlertDialogHeader>
-															<AlertDialogTitle>Edit Parameter</AlertDialogTitle>
+															<AlertDialogTitle>Delete Parameter</AlertDialogTitle>
 															<AlertDialogDescription>
-																This will allow you to edit the parameter and remove the current value.
+																This will delete the parameter from the layer
 															</AlertDialogDescription>
 														</AlertDialogHeader>
 														<AlertDialogFooter>
@@ -162,7 +167,7 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 																setSelectedLayer(layer.name);
 																setSelectedParam(paramToEdit.name);
 																setSelectedParamValue(paramToEdit.value);
-															}}>Edit Parameter</AlertDialogAction>
+															}}>Delete Parameter</AlertDialogAction>
 														</AlertDialogFooter>
 													</AlertDialogContent>
 												</AlertDialog>
