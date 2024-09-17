@@ -105,6 +105,7 @@ export const run_container = action({
 
     console.log("??????/")
     const container = await ctx.runQuery(internal.container.getInternalContainer, {id:args.id})
+    console.log("!!!!!!!!!")
     if (!container)
         throw "No container found";
     if (!container.dataset)
@@ -113,7 +114,9 @@ export const run_container = action({
         throw "No models found";
 
     await ctx.runMutation(internal.container.saveContainerOptions, {id: args.id, options:args.options})
+    console.log("here")
     const _dataset = await ctx.runQuery(internal.data.getSet, {id: container.dataset})
+    console.log("_dataset", _dataset);
 
     if (!_dataset)
         throw "Nop dataset found"
@@ -122,11 +125,12 @@ export const run_container = action({
      if (!_dataref)
         throw "Nop dataset found"
 
-    // // const data = make_dummy_data();
+    // const data = make_dummy_data();
 
     for (let model_id of container.models) {
+        console.log("model_id", model_id)
         let model = await ctx.runQuery(internal.model.getModel, {id: model_id})
-
+        console.log("model", model)
         if (model) {
                 console.log("Run model")
             await run_model(model, _dataref, ctx, args.options)

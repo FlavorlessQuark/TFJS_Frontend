@@ -41,8 +41,7 @@ const RunModal = ({ container }: { container: Container }) => {
   const { mutate, isLoading } = useCreateModel();
   const run = useAction(api.tensorflow.tf_model.run_container)
 
-  const compile_run = async (e) => {
-    e.preventDefault();
+  const compile_run = async () => {
     console.log("Running...")
     setState("openRunModal", false);
     await run({id:container._id, options: selectedOption})
@@ -89,6 +88,16 @@ const RunModal = ({ container }: { container: Container }) => {
     setOptions(container.compileOptions)
   }, [container])
 
+  const getNumericOption = (field: string, key: 'min' | 'max') => {
+    const option = options[field as keyof typeof options];
+    return typeof option === 'object' && key in option ? (option as any)[key] : undefined;
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    void form.handleSubmit(onSubmit)(e);
+  };
+
   return (
     <Dialog open={state.openRunModal} onOpenChange={onClose}>
       <DialogTrigger onClick={() => setState("openModelLayer", true)}>
@@ -98,7 +107,7 @@ const RunModal = ({ container }: { container: Container }) => {
       </DialogTrigger>
       <DialogContent className={'p-10 md:!w-[800px] !app-bg'}>
         <Form {...form}>
-          <form onSubmit={() => void form.handleSubmit(onSubmit)} >
+          <form onSubmit={handleSubmit}>
             <div className={'flex flex-col justify-center items-center gap-4'}>
               <CirclePlay className={'w-10 h-10 stroke-purple-800'}/>
               <div className={'flex flex-col justify-center items-center gap-1'}>
@@ -120,11 +129,17 @@ const RunModal = ({ container }: { container: Container }) => {
                         <div className="grid w-2/3 items-center gap-1.5">
                             {
                                 typeof container.compileOptions[field as keyof typeof options] === "number" ?
-                                    <Input type="number" id="container" min={options[field].min} max={options[field].max} placeholder={selectedOption[field as keyof typeof options].toString()}/>
+                                    <Input
+                                        type="number"
+                                        id="container"
+                                        min={getNumericOption(field, 'min')}
+                                        max={getNumericOption(field, 'max')}
+                                        placeholder={selectedOption[field as keyof typeof selectedOption].toString()}
+                                    />
                                     :
                                     <Select onValueChange={(e) => setOptions({...selectedOption,[field]: e})}>
                                         <SelectTrigger id="model" className="items-start [&_[data-description]]:hidden">
-                                            <SelectValue placeholder={selectedOption[field]} />
+                                            <SelectValue placeholder={selectedOption[field as keyof typeof options]} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {
@@ -156,7 +171,7 @@ const RunModal = ({ container }: { container: Container }) => {
               </div>
 
               <div className={'w-4/5 flex items-end justify-end'}>
-                <Button disabled={!container.dataset} onClick={async (e) => compile_run(e)}>
+                <Button disabled={!container.dataset} onClick={compile_run}>
                   Run model
                 </Button>
               </div>

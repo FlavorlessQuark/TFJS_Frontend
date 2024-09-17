@@ -82,7 +82,7 @@ const AddDatasetDialog = ({ container }: { container: Container }) => {
   }, [form]);
 
   async function onSubmit(values: z.infer<typeof FormSchema>) {
-    console.log("values", values);
+    console.log("Submitting values:", JSON.stringify(values, null, 2));
     const tagsArray = values.tags ? values.tags.map(tag => tag.text) : [];
 
     mutate({
@@ -92,14 +92,15 @@ const AddDatasetDialog = ({ container }: { container: Container }) => {
       public: values.public,
       file: values.file,
       filetype: values.filetype,
-      id:container._id
+      id: container._id
     }, {
       onSuccess: (data) => {
-        console.log("data", data)
-        toast.success(`${values.name} created successfully.`)
+        console.log("Mutation successful:", data);
+        toast.success(`${values.name} created successfully.`);
       },
       onError: (error) => {
-        toast.error(`Error: ${error.message}`)
+        console.error("Mutation error:", error);
+        toast.error(`Error: ${error.message}`);
       },
       onFinally: () => {
         form.reset();

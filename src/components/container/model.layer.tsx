@@ -31,6 +31,12 @@ const ModelLayer = ({ layerIdx, params, addToLayer }: ModelLayerProps) => {
   const [selectedParamValue, setSelectedParamValue] = useState<any>(undefined)
   const [selectedType, setSelectedType] = useState<string | undefined>(undefined)
 
+  const resetFields = () => {
+    setSelectedParam(undefined);
+    setSelectedType(undefined);
+    setSelectedParamValue(undefined);
+  };
+
     return (
         <>
             <Select onValueChange={(e) => {
@@ -80,6 +86,7 @@ const ModelLayer = ({ layerIdx, params, addToLayer }: ModelLayerProps) => {
                     e.preventDefault();
                     if (selectedParam && selectedParamValue !== undefined) {
                         addToLayer(e, layerIdx, {name: selectedParam, value: selectedParamValue});
+                        resetFields();
                     }
                 }}
                 disabled={!selectedParam || selectedParamValue === undefined}

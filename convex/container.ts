@@ -410,7 +410,6 @@ export const incrementViews = mutation({
   }
 });
 
-
 /**
  * Add tags to a container
  * @param id
@@ -425,5 +424,41 @@ export const addTags = mutation({
   async handler(ctx, args) {
     const container = await ctx.db.get(args.id);
     await ctx.db.patch(args.id, {tags: [...(container?.tags || []), ...args.tags]});
+  }
+});
+
+/**
+ * Get liked containers
+ * @returns {Promise<Container[]>}
+ */
+export const getLikedContainers = query({
+  args: {},
+  async handler(ctx) {
+    const userId = await user(ctx);
+    const containers = await ctx.db.query("container")
+      .withIndex("by_likes", (q) => q.eq("likes", [userId]))
+      .collect();
+
+    const populatedContainers = await Promise.all(containers.map(async (container) => {
+      const dataset = container.dataset ? await ctx.db.get(container.dataset) : null;
+      const creator = await ctx.db.get(container.creator);
+      return {
+        ...container,
+        dataset: dataset ? {
+          name: dataset.name,
+          xshape: dataset.xshape,
+          yshape: dataset.yshape,
+          description: dataset.description,
+          _id: dataset._id,
+          _creationTime: dataset._creationTime,
+        } : null,
+        creator: creator ? {
+          _id: creator._id,
+          name: creator.name,
+        } : null
+      };
+    }));
+
+    return populatedContainers;
   }
 });

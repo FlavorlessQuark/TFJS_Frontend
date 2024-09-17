@@ -25,7 +25,7 @@ export interface Model {
 	_id: Id<"model">;
 	name: string;
 	layers: Layer[];
-	_creationTime: number;
+	_creationTime: number 
 }
 
 export interface Container {
