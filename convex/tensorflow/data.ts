@@ -21,6 +21,7 @@ interface I_Dataset {
 
  */
 export const dataParseFrom_Csv = (data: any) => {
+    console.log("data", data)
     let set : I_Dataset = {
         data: {x:[], y:[]},
         xshape:[0],

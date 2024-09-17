@@ -68,7 +68,7 @@ const NavSelector = ({pathname}: {pathname: string}) => {
                     <div className="flex flex-col items-center justify-center p-2 gap-2">
                     No results found.
                     <UploadButton
-                        className={(progress: number | null) =>
+                        className={() =>
                           "cursor-pointer text-white py-1 px-2 flex justify-center items-center border border-zinc-800 w-full"
                         }
                         uploadUrl={generateUploadUrl}
