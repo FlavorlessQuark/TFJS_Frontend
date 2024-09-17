@@ -88,17 +88,17 @@ const FavoritesCard = ({ container }: FavoritesCardProps) => {
               setOpen(!open);
             }}>
               <span className={'text-xs text-zinc-600 hover:underline cursor-pointer'}>
-                Dataset: {container.dataset.name}
+                Dataset: {container?.dataset?.name || "Unknown"}
               </span>
             </PopoverTrigger>
             <PopoverContent className="w-80" side="bottom" sideOffset={10} align="start">
               <div className="grid gap-4">
                 <div className="space-y-2">
                   <h4 className="font-medium leading-none card-title">
-                    {container.creator.name}/{container.dataset.name}
+                    {container?.creator?.name || "Unknown"}/{container?.dataset?.name || "Unknown"}
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    {container.description}
+                    {container?.description || "Unknown"}
                   </p>
                 </div>
                 <div className="grid gap-2">
@@ -109,7 +109,7 @@ const FavoritesCard = ({ container }: FavoritesCardProps) => {
                       id="width"
                       defaultValue="100%"
                       className="col-span-2 h-8 hover:!border hover:!border-purple-400"
-                      value={format(container.dataset._creationTime, 'MMM d, yyyy')}
+                      value={format(container?.dataset?._creationTime || new Date(), 'MMM d, yyyy')}
                     />
                   </div>
                   <div className="grid grid-cols-3 items-center gap-4">
@@ -119,7 +119,7 @@ const FavoritesCard = ({ container }: FavoritesCardProps) => {
                       id="maxWidth"
                       defaultValue="300px"
                       className="col-span-2 h-8 hover:!border hover:!border-purple-400"
-                      value={container.dataset.xshape}
+                      value={container?.dataset?.xshape || "Unknown"}
                     />
                   </div>
                   <div className="grid grid-cols-3 items-center gap-4">
@@ -129,7 +129,7 @@ const FavoritesCard = ({ container }: FavoritesCardProps) => {
                       id="height"
                       defaultValue="25px"
                       className="col-span-2 h-8 hover:!border hover:!border-purple-400"
-                      value={container.dataset.yshape}
+                      value={container?.dataset?.yshape || "Unknown"}
                     />
                   </div>
                   <div className="grid grid-cols-3 items-center gap-4">
