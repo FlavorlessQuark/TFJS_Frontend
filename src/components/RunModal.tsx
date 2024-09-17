@@ -44,6 +44,7 @@ const RunModal = ({ container }: { container: Container }) => {
   const compile_run = async (e) => {
     e.preventDefault();
     console.log("Running...")
+    setState("openRunModal", false);
     await run({id:container._id, options: selectedOption})
   }
 
