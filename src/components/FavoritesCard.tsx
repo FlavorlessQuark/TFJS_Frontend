@@ -12,6 +12,7 @@ import {
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { format } from "date-fns";
+import { useState } from "react";
 
 interface FavoritesCardProps {
   container: any;
@@ -19,6 +20,7 @@ interface FavoritesCardProps {
 
 const FavoritesCard = ({ container }: FavoritesCardProps) => {
   const { mutate } = useToggleLike();
+  const [open, setOpen] = useState(false);
 
   const handleClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -79,8 +81,12 @@ const FavoritesCard = ({ container }: FavoritesCardProps) => {
           </div>
 
           <div>
-          <Popover>
-            <PopoverTrigger asChild>
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setOpen(!open);
+            }}>
               <span className={'text-xs text-zinc-600 hover:underline cursor-pointer'}>
                 Dataset: {container.dataset.name}
               </span>
