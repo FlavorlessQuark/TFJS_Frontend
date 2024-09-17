@@ -188,7 +188,10 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 					))
 					}
 					<div>
-						<Select onValueChange={(e) => setSelectedLayer(e)}>
+						<Select 
+							value={selectedLayer} 
+							onValueChange={(e) => setSelectedLayer(e)}
+						>
 							<SelectTrigger id="model" className="items-start [&_[data-description]]:hidden">
 								<SelectValue placeholder="Select a layer" />
 							</SelectTrigger>
@@ -200,7 +203,12 @@ const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
 								)}
 							</SelectContent>
 						</Select>
-						<Button className="mt-1 w-full !bg-zinc-100 hover:!bg-zinc-300 hover:!text-zinc-950" onClick={addSelectedLayer}> Add</Button>
+						<Button 
+							className="mt-1 w-full !bg-zinc-100 hover:!bg-zinc-300 hover:!text-zinc-950" 
+							onClick={addSelectedLayer}
+						> 
+							Add
+						</Button>
 						{/* <Button onClick={async () => await testRun({id:elem?._id})}> Run Model (test button)</Button> */}
 						<div className="flex flex-row items-center mt-4 justify-between">
 
