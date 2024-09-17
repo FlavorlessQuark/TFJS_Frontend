@@ -73,7 +73,7 @@ const FavoritesCard = ({ container }: FavoritesCardProps) => {
       <div className="flex flex-row items-center justify-between space-x-2">
         <div className="flex flex-col space-y-1">
           <div className={'text-xs text-zinc-600'}>
-            {container.models.length} models trained
+            {container?.models?.length || 0} models trained
           </div>
 
           <div className={'text-xs text-zinc-600'}>
