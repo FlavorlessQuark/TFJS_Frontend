@@ -24,7 +24,6 @@ import { cn } from "@/lib/utils";
 import RunModal from "../RunModal";
 
 const ModelContainer = ({ layerAttrs, model }: ModelContainerProps) => {
-	const testRun = useAction(api.tensorflow.tf_model.run_model)
 	const [selectedLayer, setSelectedLayer] = useState("")
 	const [openAccordions, setOpenAccordions] = useState<string[]>([]);
 	const [hoveredParam, setHoveredParam] = useState<number | null>(null);
