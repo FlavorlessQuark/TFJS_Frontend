@@ -43,7 +43,7 @@ const RunModal = ({ container }: { container: Container }) => {
 
   const compile_run = async () => {
     console.log("Running...")
-    setState("openRunModal", false)
+    setState("openRunModal", false);
     await run({id:container._id, options: selectedOption})
   }
 
@@ -129,9 +129,9 @@ const RunModal = ({ container }: { container: Container }) => {
                         <div className="grid w-2/3 items-center gap-1.5">
                             {
                                 typeof container.compileOptions[field as keyof typeof options] === "number" ?
-                                    <Input 
-                                        type="number" 
-                                        id="container" 
+                                    <Input
+                                        type="number"
+                                        id="container"
                                         min={getNumericOption(field, 'min')}
                                         max={getNumericOption(field, 'max')}
                                         placeholder={selectedOption[field as keyof typeof selectedOption].toString()}

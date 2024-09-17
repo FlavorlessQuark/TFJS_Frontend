@@ -31,7 +31,7 @@ export const updateModel_Logs = internalMutation({
             if (!model.logs)  {
                 model.logs = {logs: []}
             }
-            if (model.logs && model.logs.logs.length > args.batchNum) {
+            if (model.logs && model.logs.logs.length >= args.batchNum) {
                 model.logs.logs = []
             }
             const formattedLogs = args.logs.map((log:any) => {

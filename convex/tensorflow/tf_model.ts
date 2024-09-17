@@ -57,10 +57,10 @@ export const run_model = async(_model: Doc<"model">, dataset: Doc<"dataref">, ct
     let aggregate:any = []
     let num = 0
 
-    const interval = setInterval(async() => {
-     await ctx.runMutation(internal.model.updateModel_Logs, {logs: aggregate, id:_model._id, batchNum: 0})
-     aggregate = []
-    }, 200);
+    // const interval = setInterval(async() => {
+    //  await ctx.runMutation(internal.model.updateModel_Logs, {logs: aggregate, id:_model._id, batchNum: 0})
+    //  aggregate = []
+    // }, 200);
 
     await model.fit(train.x, train.y, {
         batchSize: compileOptions.batchSize,
@@ -73,7 +73,7 @@ export const run_model = async(_model: Doc<"model">, dataset: Doc<"dataref">, ct
             },
             onTrainEnd: async () => {
             console.log("onTrainEnd")
-                clearInterval(interval)
+                // clearInterval(interval)
             },
             onBatchEnd: async (epoch, logs) => {
                 console.log("batchend")
@@ -133,7 +133,7 @@ export const run_container = action({
         console.log("model", model)
         if (model) {
                 console.log("Run model")
-            run_model(model, _dataref, ctx, args.options)
+            await run_model(model, _dataref, ctx, args.options)
         }
     }
 
