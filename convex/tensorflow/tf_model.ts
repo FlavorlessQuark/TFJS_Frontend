@@ -79,7 +79,9 @@ export const run_container = action({
     },
   handler: async (ctx, args) => {
 
-    const container = await ctx.runQuery(internal.container.getInternalContainer, args)
+    console.log("??????/")
+    const container = await ctx.runQuery(internal.container.getInternalContainer, {id:args.id})
+    console.log("!!!!!!!!!")
     if (!container)
         throw "No container found";
     if (!container.dataset)

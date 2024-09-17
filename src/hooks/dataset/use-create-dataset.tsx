@@ -18,6 +18,7 @@ type RequestType = {
   public?: boolean;
   file: File;
   filetype: string;
+  id:any
 };
 
 type ResponseType = {
@@ -37,7 +38,7 @@ export const useCreateDataset = () => {
   const [data, setData] = useState<ResponseType>(null)
   const [error, _] = useState<Error | null>(null)
   const [status, setStatus] = useState<"loading" | "success" | "error" | "finally" | null>(null)
-  
+
   const isLoading = useMemo(() => status === "loading", [status])
   const isSuccess = useMemo(() => status === "success", [status])
   const isError = useMemo(() => status === "error", [status])
@@ -65,7 +66,7 @@ export const useCreateDataset = () => {
     }
   }, [])
 
-  return { 
+  return {
     mutate,
     isLoading,
     isSuccess,
