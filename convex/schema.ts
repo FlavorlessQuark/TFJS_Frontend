@@ -23,6 +23,7 @@ export default defineSchema({
         metrics:v.optional(v.string())
     }))
   })
+    .index("by_likes", ["likes"])
     .index("by_creator", ["creator"])
     .index("by_public", ["public"]),
     model : defineTable({
@@ -68,5 +69,5 @@ export default defineSchema({
         }),
         xshape:v.array(v.number()),
         yshape:v.array(v.number())
-    })
+    }),
 });

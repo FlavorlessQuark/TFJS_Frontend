@@ -64,39 +64,6 @@ const ModelHeader = ({ container, model, layerAttrs }: ModelHeaderProps) => {
       </motion.div>
     </div>
     </Button>
-    <Button
-      variant="outline"
-      size="sm"
-      className="gap-1.5 h-7 text-xs !bg-transparent dark:!text-zinc-200 !border dark:!border-zinc-800 hover:!bg-zinc-900"
-    >
-      <Share className="size-3.5"/>
-      Share
-    </Button>
-    <UploadButton
-      className={(progress: number | null) =>
-        "!gap-1.5 !h-7 text-xs !bg-transparent dark:!text-zinc-200 !border dark:!border-zinc-800 hover:!bg-zinc-900 flex items-center justify-center px-2"
-      }
-      uploadUrl={generateUploadUrl}
-      fileTypes={["text/*", "application/*"]}
-      onUploadComplete={async (
-        uploaded: UploadFileResponse[]
-      ) => {
-        const uploadedFile = (
-          uploaded[0].response as any
-        ).storageId as string;
-
-        console.log("uploadedFile", uploadedFile)
-      }}
-      onUploadError={(error: unknown) => {
-        alert(`ERROR! ${error}`);
-      }}
-      content={(progress: number | null): string => {
-        if (progress === null) {
-          return `Upload dataset`
-        }
-        return `${progress}%`;
-      }}
-    />
     <AddDatasetDialog container={container as Container} />
     <AddModelDialog container={container as Container} />
     <RunModal container={container as Container} />

@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { internalQuery, mutation } from "./_generated/server";
+import { internalQuery, mutation, query } from "./_generated/server";
 import { dataParseFrom_Csv, dataParseFrom_Json } from "./tensorflow/data";
 import { user } from "./helpers";
 
@@ -33,50 +33,58 @@ export const saveDataset = mutation({
         filetype: v.string(),
     },
     handler: async (ctx, args) => {
-        let file;
+        try {
+            console.log("Starting saveDataset mutation");
+            console.log("Original args:", JSON.stringify(args, null, 2));
 
-        console.log("args", args)
-        console.log("file", args.file)
+            let file;
 
-        if (args.filetype == "text/json" || args.filetype == "application/json")
-        {
-            const json_file = JSON.parse(args.file)
-            file = dataParseFrom_Json(json_file)
-        }
-        if (args.filetype == "text/csv")
-            file = dataParseFrom_Csv(args.file)
+            console.log("args", args)
+            console.log("file", args.file)
 
-        console.log("file", file)
+            if (args.filetype == "text/json" || args.filetype == "application/json")
+            {
+                const json_file = JSON.parse(args.file)
+                file = dataParseFrom_Json(json_file)
+            }
+            if (args.filetype == "text/csv")
+                file = dataParseFrom_Csv(args.file)
 
-        let dataset;
-        if (file) {
-            const refId = await ctx.db.insert("dataref", file)
-            const self = await user(ctx)
+            console.log("file", file)
 
-            console.log("refId", refId)
-            console.log("self", self)
+            let dataset;
+            if (file) {
+                const refId = await ctx.db.insert("dataref", file)
+                const self = await user(ctx)
 
-            dataset = await ctx.db.insert('dataset', {
-                name:args.name,
-                description: args.description,
-                dataref: refId,
-                tags: args.tags,
-                creator: self,
-                public: args.public,
-                xshape:file.xshape,
-                yshape:file.yshape
-            })
+                console.log("refId", refId)
+                console.log("self", self)
 
-            if (args.id)
-                await ctx.db.patch(args.id, {dataset: dataset})
-        }
+                dataset = await ctx.db.insert('dataset', {
+                    name:args.name,
+                    description: args.description,
+                    dataref: refId,
+                    tags: args.tags,
+                    creator: self,
+                    public: args.public,
+                    xshape:file.xshape,
+                    yshape:file.yshape
+                })
 
-        console.log("dataset", dataset)
+                if (args.id)
+                    await ctx.db.patch(args.id, {dataset: dataset})
+            }
 
-        return {
-            message: "Dataset created",
-            status: 200,
-            dataset: dataset
+            console.log("dataset", dataset)
+
+            return {
+                message: "Dataset created",
+                status: 200,
+                dataset: dataset
+            };
+        } catch (error) {
+            console.error("Error in saveDataset:", error);
+            throw new Error(`Failed to save dataset: ${error}`);
         }
     }
 })
@@ -91,4 +99,17 @@ export const generateUploadUrl = mutation(async (ctx) => {
     return await ctx.storage.generateUploadUrl();
   });
 
+export const getDatasets = query({
+    args: {
+        public: v.optional(v.boolean()),
+    },
+    handler: async (ctx, args) => {
+        const self = await user(ctx)
+        
+        const datasets = await ctx.db.query("dataset")
+        .filter((q) => args.public ? q.eq(q.field("public"), true) : q.eq(q.field("creator"), self))
+        .collect()
 
+        return datasets
+    }
+})
