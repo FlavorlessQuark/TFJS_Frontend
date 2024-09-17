@@ -97,7 +97,7 @@ const ModelHeader = ({ container, model, layerAttrs }: ModelHeaderProps) => {
         return `${progress}%`;
       }}
     />
-    <AddDatasetDialog />
+    <AddDatasetDialog container={container as Container} />
     <AddModelDialog container={container as Container} />
     <RunModal container={container as Container} />
     </div>

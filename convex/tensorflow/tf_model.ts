@@ -8,11 +8,14 @@ import { dataMakeTensors, make_dummy_data } from "./data";
 import { mappings } from "./tf_fn_mapping";
 import tf, { layers } from "@tensorflow/tfjs";
 import { Doc, Id } from "../_generated/dataModel";
+import { setInterval } from "timers";
 
  const build_model = (model: tf.Sequential,  model_layers:any, options:any) =>
 {
     model.resetStates()
+    // console.log("layers", model_layers)
     for (const layer of model_layers) {
+        // console.log("LAYER", layer)
         if (layer.name in mappings)
         {
             const key = layer.name as keyof typeof mappings;
@@ -20,17 +23,22 @@ import { Doc, Id } from "../_generated/dataModel";
 
             layer.parameters.map((param:any) => constructed_params[param.name] = param.value)
 
-            console.log("Name", layer.name, "params", constructed_params)
+            // console.log("Name", layer.name, "params", constructed_params)
 
             model.add(mappings[key](constructed_params));
         }
     }
     const optimizer = tf.train.adam();
+    // console.log("compile", options)
     model.compile({
         optimizer: optimizer,
         loss: options.loss,
         metrics: [options.metrics],
     });
+}
+
+const wrapper = async() => {
+
 }
 
 export const run_model = async(_model: Doc<"model">, dataset: Doc<"dataref">, ctx:any, compileOptions: any) => {
@@ -43,7 +51,16 @@ export const run_model = async(_model: Doc<"model">, dataset: Doc<"dataref">, ct
 
 
     const [train, validation, test] = dataMakeTensors(dataset, TRAIN_COUNT, TEST_COUNT);
+    // console.log("build")
     build_model(model, _model.layers, compileOptions)
+
+    let aggregate:any = []
+    let num = 0
+
+    const interval = setInterval(async() => {
+     await ctx.runMutation(internal.model.updateModel_Logs, {logs: aggregate, id:_model._id, batchNum: 0})
+     aggregate = []
+    }, 200);
 
     await model.fit(train.x, train.y, {
         batchSize: compileOptions.batchSize,
@@ -56,11 +73,18 @@ export const run_model = async(_model: Doc<"model">, dataset: Doc<"dataref">, ct
             },
             onTrainEnd: async () => {
             console.log("onTrainEnd")
+                clearInterval(interval)
             },
             onBatchEnd: async (epoch, logs) => {
-                await ctx.runMutation(internal.model.updateModel_Logs, {logs: logs, id:_model._id, batchNum:epoch})
+                console.log("batchend")
+                aggregate.push(logs)
+                num = epoch
             }
         }})
+
+    await ctx.runMutation(internal.model.updateModel_Logs, {logs: aggregate, id:_model._id, batchNum: num})
+
+    console.log("done")
 
     // const result = (model.evaluate(test.x, test.y))
 
@@ -79,7 +103,8 @@ export const run_container = action({
     },
   handler: async (ctx, args) => {
 
-    const container = await ctx.runQuery(internal.container.getInternalContainer, args)
+    console.log("??????/")
+    const container = await ctx.runQuery(internal.container.getInternalContainer, {id:args.id})
     if (!container)
         throw "No container found";
     if (!container.dataset)
@@ -97,12 +122,13 @@ export const run_container = action({
      if (!_dataref)
         throw "Nop dataset found"
 
-    // const data = make_dummy_data();
+    // // const data = make_dummy_data();
 
     for (let model_id of container.models) {
         let model = await ctx.runQuery(internal.model.getModel, {id: model_id})
 
         if (model) {
+                console.log("Run model")
             run_model(model, _dataref, ctx, args.options)
         }
     }

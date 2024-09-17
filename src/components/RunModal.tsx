@@ -41,6 +41,12 @@ const RunModal = ({ container }: { container: Container }) => {
   const { mutate, isLoading } = useCreateModel();
   const run = useAction(api.tensorflow.tf_model.run_container)
 
+  const compile_run = async (e) => {
+    e.preventDefault();
+    console.log("Running...")
+    await run({id:container._id, options: selectedOption})
+  }
+
   const options = {
     "batchSize": {  "min": 1, "max": 10, options:[]},
     "epochs": {  "min": 1, "max": 10, options: []},
@@ -149,7 +155,7 @@ const RunModal = ({ container }: { container: Container }) => {
               </div>
 
               <div className={'w-4/5 flex items-end justify-end'}>
-                <Button disabled={!container.dataset} onClick={async (e) => {e.preventDefault(); await run({id:container._id, options: selectedOption})}}>
+                <Button disabled={!container.dataset} onClick={async (e) => compile_run(e)}>
                   Run model
                 </Button>
               </div>
