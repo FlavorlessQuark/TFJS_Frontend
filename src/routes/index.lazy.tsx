@@ -1,4 +1,4 @@
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createLazyFileRoute, Link } from '@tanstack/react-router'
 import { api } from "../../convex/_generated/api"
 import { useQuery } from 'convex/react';
 import { Star, TableProperties } from 'lucide-react';
@@ -20,7 +20,9 @@ function Index() {
           <span className="flex items-center gap-2">Favorites <Star className="size-4 fill-yellow-500 stroke-yellow-500" /></span>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {data?.map((container) => (
-              <FavoritesCard key={container._id} container={container} />
+              <Link to={`/containers/${container._id}`} key={container._id} className="flex">
+                <FavoritesCard key={container._id} container={container} />
+              </Link>
             ))}
           </div>
         </div>
