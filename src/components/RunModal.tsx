@@ -33,10 +33,20 @@ const RunModal = ({ container }: { container: Container }) => {
   const { state, setState } = useGlobalState();
   const [selectedOption, setOptions] = useState({
     batchSize: 5,
-    epochs:5,
-    loss:"meanSquaredError",
-    metrics:"accuracy"
+    epochs: 5,
+    loss: "meanSquaredError",
+    metrics: "accuracy"
   });
+
+  useEffect(() => {
+    if (container && container.compileOptions) {
+      setOptions(prevOptions => ({
+        ...prevOptions,
+        ...container.compileOptions
+      }));
+    }
+  }, [container]);
+
   const user = useQuery(api.users.viewer);
   const { mutate, isLoading } = useCreateModel();
   const run = useAction(api.tensorflow.tf_model.run_container)
@@ -84,10 +94,6 @@ const RunModal = ({ container }: { container: Container }) => {
     }
   };
 
-  useEffect (() => {
-    setOptions(container.compileOptions)
-  }, [container])
-
   const getNumericOption = (field: string, key: 'min' | 'max') => {
     const option = options[field as keyof typeof options];
     return typeof option === 'object' && key in option ? (option as any)[key] : undefined;
@@ -122,22 +128,26 @@ const RunModal = ({ container }: { container: Container }) => {
               {/* Run commands */}
               {
                 Object.keys(options).map((field) => (
-                    <div className={'flex flex-row items-center justify-center w-4/5 gap-x-4'}>
+                    <div key={field} className={'flex flex-row items-center justify-center w-4/5 gap-x-4'}>
                         <div className="grid w-1/3 items-center gap-1.5">
                         <Label htmlFor="container" className={'text-zinc-200 font-thin'}>{field}</Label>
                         </div>
                         <div className="grid w-2/3 items-center gap-1.5">
                             {
-                                typeof container.compileOptions[field as keyof typeof options] === "number" ?
+                                typeof selectedOption[field as keyof typeof selectedOption] === "number" ? (
                                     <Input
                                         type="number"
                                         id="container"
                                         min={getNumericOption(field, 'min')}
                                         max={getNumericOption(field, 'max')}
-                                        placeholder={selectedOption[field as keyof typeof selectedOption].toString()}
+                                        value={selectedOption[field as keyof typeof selectedOption]}
+                                        onChange={(e) => setOptions({...selectedOption, [field]: Number(e.target.value)})}
                                     />
-                                    :
-                                    <Select onValueChange={(e) => setOptions({...selectedOption,[field]: e})}>
+                                ) : (
+                                    <Select 
+                                        value={selectedOption[field as keyof typeof selectedOption] as string} 
+                                        onValueChange={(e) => setOptions({...selectedOption, [field]: e})}
+                                    >
                                         <SelectTrigger id="model" className="items-start [&_[data-description]]:hidden">
                                             <SelectValue placeholder={selectedOption[field as keyof typeof options]} />
                                         </SelectTrigger>
@@ -150,7 +160,8 @@ const RunModal = ({ container }: { container: Container }) => {
                                                 )
                                             )}
                                         </SelectContent>
-                                </Select>
+                                    </Select>
+                                )
                             }
                         </div>
                     </div>
