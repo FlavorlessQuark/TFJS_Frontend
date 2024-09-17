@@ -121,8 +121,16 @@ const AddDatasetDialog = ({ container }: { container: Container }) => {
     <Dialog open={state.openDatasetModal} onOpenChange={onClose}>
       <DialogTrigger>
         <Button className="h-7 text-xs !bg-transparent dark:!text-zinc-200 !border dark:!border-zinc-800" disabled={isLoading}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Dataset
+          {
+            container.dataset ?
+            "Manage Dataset"
+            :
+            <>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Dataset
+            </>
+
+          }
         </Button>
       </DialogTrigger>
       <DialogContent className={'p-10 md:!w-[800px] !app-bg'}>
